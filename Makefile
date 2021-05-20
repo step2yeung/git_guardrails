@@ -3,7 +3,7 @@ build: compile
 compile: clean
 	python3 -m build
 
-pex: compile
+pex:
 	pex -r requirements.txt -o git_guardrails.pex -e git_guardrails.command_line:main . --validate-entry-point
 
 deploy: build
