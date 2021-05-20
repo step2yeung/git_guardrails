@@ -1,0 +1,12 @@
+{
+  "settings": {
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/bower_components": true,
+      "**/*.code-search": true,
+      // "src/**/*.egg-info": true,
+      // "src/**/__pycache__": true
+    }
+  },
+  "folders": [{"name": "git_guardrails", "path": "."}]
+}

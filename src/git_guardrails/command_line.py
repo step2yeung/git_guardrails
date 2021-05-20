@@ -3,7 +3,10 @@ from subprocess import Popen
 import asyncio
 import time
 from functools import wraps
+from colorama import init as initColorama
+from colorama import Fore, Back, Style
 
+initColorama()
 
 def coro(f):
     @wraps(f)
@@ -22,6 +25,7 @@ async def say_after(delay, what):
 @coro
 async def main():
     """Example script."""
+    print(Fore.RED + 'some red text')
     print(f"started at {time.strftime('%X')}")
     await say_after(1, 'hello')
     p = Popen(['sleep', '2'])  # something long running
