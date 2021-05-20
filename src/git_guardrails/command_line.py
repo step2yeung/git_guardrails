@@ -5,6 +5,8 @@ import time
 from functools import wraps
 from colorama import init as initColorama
 from colorama import Fore, Back, Style
+from git import Repo
+import os
 
 initColorama()
 
@@ -25,7 +27,13 @@ async def say_after(delay, what):
 @coro
 async def main():
     """Example script."""
-    print(Fore.RED + 'some red text')
+    print(Fore.RED + 'some red text' + Fore.RESET)
+    cwd = os.getcwd()
+    repo = Repo(cwd)
+    assert not repo.bare
+    firstRemote = repo.remotes[0]
+    print(firstRemote.name)
+    print(firstRemote.url)
     print(f"started at {time.strftime('%X')}")
     await say_after(1, 'hello')
     p = Popen(['sleep', '2'])  # something long running
