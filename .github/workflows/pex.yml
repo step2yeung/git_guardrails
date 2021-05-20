@@ -29,4 +29,5 @@ jobs:
       run: |
         make
     - name: Make PEX file
+      run: |
         make pex
