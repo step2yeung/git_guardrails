@@ -3,10 +3,28 @@
     "files.exclude": {
       "**/node_modules": true,
       "**/bower_components": true,
-      "**/*.code-search": true,
+      "**/*.code-search": true
       // "src/**/*.egg-info": true,
       // "src/**/__pycache__": true
     }
   },
-  "folders": [{"name": "git_guardrails", "path": "."}]
+  "folders": [
+    {
+      "name": "git_guardrails",
+      "path": "."
+    }
+  ],
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Python: Module",
+        "type": "python",
+        "python": "/usr/local/bin/python3",
+        "request": "launch",
+        "module": "git_guardrails",
+        "args": ["--verbose"]
+      }
+    ]
+  }
 }

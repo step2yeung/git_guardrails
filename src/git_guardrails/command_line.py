@@ -1,43 +1,32 @@
-import click
-from subprocess import Popen
-import asyncio
-import time
-from functools import wraps
+from click import option, group
 from colorama import init as initColorama
-from colorama import Fore, Back, Style
-from git import Repo
-import os
+from git_guardrails.cli.ux import CLIUX
+from git_guardrails.coroutine import coroutine
+from git_guardrails.validate import validate_entry
+from git_guardrails.validate.cli_options import ValidateCLIOptions
+from git_guardrails.validate.options import ValidateOptions
 
 initColorama()
 
-def coro(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        return asyncio.run(f(*args, **kwargs))
-
-    return wrapper
+CONTEXT_SETTINGS = dict(
+    help_option_names=['-h', '--help'],
+    auto_envvar_prefix='GIT_GUARDRAILS'
+)
 
 
-async def say_after(delay, what):
-    await asyncio.sleep(delay)
-    print(what)
-
-
-@click.command()
-@coro
+@group(context_settings=CONTEXT_SETTINGS)
+@coroutine
 async def main():
-    """Example script."""
-    print(Fore.RED + 'some red text' + Fore.RESET)
-    cwd = os.getcwd()
-    repo = Repo(cwd)
-    assert not repo.bare
-    firstRemote = repo.remotes[0]
-    print(firstRemote.name)
-    print(firstRemote.url)
-    print(f"started at {time.strftime('%X')}")
-    await say_after(1, 'hello')
-    p = Popen(['sleep', '2'])  # something long running
-    # ... do other stuff while subprocess is running
-    p.wait()
-    click.echo('Hello World!')
-    print(f"finished at {time.strftime('%X')}")
+    return
+
+
+@main.command()
+@option('--verbose/--no-verbose', type=bool, default=False)
+@option('--current-branch', type=str)
+@coroutine
+async def validate(verbose: bool, current_branch: str):
+    """Examine the current Git workspace and perform some sanity-checking"""
+
+    cliOptions = ValidateCLIOptions(verbose, current_branch)
+    cli = CLIUX()
+    await validate_entry(cli, ValidateOptions(cliOptions))
