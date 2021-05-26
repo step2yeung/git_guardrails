@@ -8,6 +8,12 @@ pex:
 deploy: build
 	cp git_guardrails.pex /target/destination.pex
 
+test: build
+	pytest tests/*
+
+watch-test: build
+	ptw tests/*
+
 .PHONY: clean
 
 clean:
