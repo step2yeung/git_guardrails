@@ -12,12 +12,15 @@ CONTEXT_SETTINGS = dict(
     auto_envvar_prefix='GIT_GUARDRAILS'
 )
 
-BANNER_HEADLINE = Style.DIM + "|===|===|===|== " + Style.RESET_ALL + Fore.LIGHTCYAN_EX + "Git Guardrails" + Fore.RESET
-+ Style.DIM + " ==|===|===|===|" + Style.RESET_ALL
-
 
 def printBanner():
-    print("\n" + BANNER_HEADLINE)
+    print(''.join(
+        [
+            Style.DIM, "|===|===|===|==", Style.RESET_ALL,
+            Fore.LIGHTCYAN_EX, " Git Guardrails ", Fore.RESET,
+            Style.DIM, "==|===|===|===|", Style.RESET_ALL
+        ]
+    ))
 
 
 @group(context_settings=CONTEXT_SETTINGS)
