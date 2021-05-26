@@ -1,13 +1,11 @@
-from functools import wraps
-from asyncio import run
+import functools
+import asyncio
 
 
 def coroutine(f):
-    """
-    Wraps a function in `asyncio.run`
-    """
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        return run(f(*args, **kwargs))
+    ff = asyncio.coroutine(f)
 
-    return wrapper
+    def wrapper(*args, **kwargs):
+        loop = asyncio.get_event_loop()
+        return loop.run_until_complete(ff(*args, **kwargs))
+    return functools.update_wrapper(wrapper, ff)
