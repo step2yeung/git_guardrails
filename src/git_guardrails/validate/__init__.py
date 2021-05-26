@@ -1,12 +1,9 @@
 import json
-import click
-from colorama import Fore, Back, Style
 from git import Repo
-from os import getcwd
-from subprocess import Popen
 from time import strftime
 import asyncio
 from git_guardrails.cli.ux import CLIUX
+from git_guardrails.validate.cli_options import ValidateCLIOptions
 from git_guardrails.validate.options import ValidateOptions
 
 
@@ -15,21 +12,11 @@ async def say_after(delay, what):
     print(what)
 
 
-async def validate_entry(cli: CLIUX, opts: ValidateOptions):
-
-    print(json.dumps(await opts.to_dict()))
-    print(Fore.RED + 'some red text' + Fore.RESET)
-    cwd = getcwd()
-    repo = Repo(cwd)
+async def do_validate(cli: CLIUX, cliOpts: ValidateCLIOptions):
+    opts = ValidateOptions(cliOpts)
+    repo = Repo(opts.getWorkingDirectory())
     assert not repo.bare
-    firstRemote = repo.remotes[0]
-    print(firstRemote.name)
-    print(firstRemote.url)
-    print(f"started at {strftime('%X')}")
+    print(json.dumps(await opts.to_dict(repo)))
     await say_after(1, 'hello')
-    p = Popen(['sleep', '2'])  # something long running
-    # ... do other stuff while subprocess is running
-    p.wait()
-    click.echo('Hello World!')
     print(f"finished at {strftime('%X')}")
     return

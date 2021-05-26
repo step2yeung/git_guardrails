@@ -12,7 +12,10 @@ class ValidateOptions:
         return self.name
 
     def isVerbose(self) -> bool:
-        return self.cliOpts.verbose == True
+        if self.cliOpts.verbose is True:
+            return True
+        else:
+            return False
 
     async def getCurrentBranchName(self, repo: Repo) -> str:
         if (self.cliOpts.current_branch is not None):

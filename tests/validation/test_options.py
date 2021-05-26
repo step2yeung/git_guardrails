@@ -1,12 +1,11 @@
-from git_test_utils import temp_repo
-import asyncio
 import pytest
+from git_guardrails_test_helpers.git_test_utils import temp_repo
+from git_guardrails.validate.cli_options import ValidateCLIOptions
+from git_guardrails.validate.options import ValidateOptions
+
 
 # All test coroutines will be treated as marked.
 pytestmark = pytest.mark.asyncio
-
-from git_guardrails.validate.cli_options import ValidateCLIOptions
-from git_guardrails.validate.options import ValidateOptions
 
 
 def test_creation():
@@ -27,12 +26,13 @@ def test_verbosity_passthrough():
 
 async def test_branch_name_passthrough():
     with temp_repo() as repo:
-      cli_opts = ValidateCLIOptions(True, None, "fizz")
-      o = ValidateOptions(cli_opts)
-      assert await o.getCurrentBranchName(repo) == "fizz", "--current-branch supercedes git repo state"
+        cli_opts = ValidateCLIOptions(True, None, "fizz")
+        o = ValidateOptions(cli_opts)
+        assert await o.getCurrentBranchName(repo) == "fizz", "--current-branch supercedes git repo state"
+
 
 async def test_branch_name_infer():
     with temp_repo() as repo:
-      cli_opts = ValidateCLIOptions(True, None, None)
-      o = ValidateOptions(cli_opts)
-      assert await o.getCurrentBranchName(repo) in ["main", "master"], "absence of --current-branch results in inference"
+        cli_opts = ValidateCLIOptions(True, None, None)
+        o = ValidateOptions(cli_opts)
+        assert await o.getCurrentBranchName(repo) in ["main", "master"], "absence of --current-branch results in inference"
