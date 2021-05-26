@@ -44,8 +44,6 @@ jobs:
     - name: PEX Distributable
       run: |
         make pex
-    - name: Flake8 action
-      uses: suo/flake8-github-action@v1
     - name: Test with pytest
       run: |
         make test
