@@ -1,3 +1,5 @@
+from os import getcwd
+from git import Repo
 
 from git_guardrails.validate.cli_options import ValidateCLIOptions
 
@@ -7,16 +9,40 @@ class ValidateOptions:
         self.cliOpts = cliOptions
 
     def __str__(self):
-        return self.name
+        return "".join([
+            "ValidateOptions(",
+            ', '.join(
+                map(
+                    lambda pair: f"{pair[0]}={pair[1]}",
+                    [
+                        ["cliOpts", str(self.cliOpts)]
+                    ]
+                )
+            ),
+            ')'
+        ])
 
     def isVerbose(self) -> bool:
-        return True
+        if self.cliOpts.verbose is True:
+            return True
+        else:
+            return False
 
-    async def getCurrentBranchName(self) -> str:
-        return ''
+    async def getCurrentBranchName(self, repo: Repo) -> str:
+        if (self.cliOpts.current_branch is not None):
+            return self.cliOpts.current_branch
+        else:
+            return repo.active_branch.name
 
-    async def to_dict(self):
+    def getWorkingDirectory(self) -> str:
+        if (self.cliOpts.cwd is not None):
+            return self.cliOpts.cwd
+        else:
+            return getcwd()
+
+    async def to_dict(self, repo):
         return {
             "verbose": self.isVerbose(),
-            "current_branch": await self.getCurrentBranchName()
+            "current_branch": await self.getCurrentBranchName(repo),
+            "cwd": self.getWorkingDirectory()
         }

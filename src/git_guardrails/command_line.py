@@ -1,10 +1,9 @@
 from click import option, group
-from colorama import init as initColorama
+from colorama import init as initColorama, Style, Fore
 from git_guardrails.cli.ux import CLIUX
 from git_guardrails.coroutine import coroutine
-from git_guardrails.validate import validate_entry
+from git_guardrails.validate import do_validate
 from git_guardrails.validate.cli_options import ValidateCLIOptions
-from git_guardrails.validate.options import ValidateOptions
 
 initColorama()
 
@@ -14,19 +13,30 @@ CONTEXT_SETTINGS = dict(
 )
 
 
+def printBanner():
+    print(''.join(
+        [
+            Style.DIM, "|===|===|===|==", Style.RESET_ALL,
+            Fore.LIGHTCYAN_EX, " Git Guardrails ", Fore.RESET,
+            Style.DIM, "==|===|===|===|", Style.RESET_ALL
+        ]
+    ))
+
+
 @group(context_settings=CONTEXT_SETTINGS)
 @coroutine
 async def main():
+    printBanner()
     return
 
 
 @main.command()
 @option('--verbose/--no-verbose', type=bool, default=False)
+@option('--working-directory', type=str)
 @option('--current-branch', type=str)
 @coroutine
-async def validate(verbose: bool, current_branch: str):
+async def validate(verbose: bool, working_directory: str, current_branch: str):
     """Examine the current Git workspace and perform some sanity-checking"""
-
-    cliOptions = ValidateCLIOptions(verbose, current_branch)
+    cliOptions = ValidateCLIOptions(verbose, working_directory, current_branch)
     cli = CLIUX()
-    await validate_entry(cli, ValidateOptions(cliOptions))
+    await do_validate(cli, cliOptions)
