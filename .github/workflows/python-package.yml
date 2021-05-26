@@ -107,7 +107,7 @@ jobs:
         pytest
 
   os_compat:
-    needs: build
+    needs: [build, python_compat]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
