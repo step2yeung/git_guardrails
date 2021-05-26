@@ -9,7 +9,18 @@ class ValidateOptions:
         self.cliOpts = cliOptions
 
     def __str__(self):
-        return self.name
+        return "".join([
+            "ValidateOptions(",
+            ', '.join(
+                map(
+                    lambda pair: f"{pair[0]}={pair[1]}",
+                    [
+                        ["cliOpts", str(self.cliOpts)]
+                    ]
+                )
+            ),
+            ')'
+        ])
 
     def isVerbose(self) -> bool:
         if self.cliOpts.verbose is True:

@@ -1,14 +1,25 @@
 
-
 class ValidateCLIOptions:
-    def __init__(self, verbose: bool, cwd: str, current_branch: str):
-        assert verbose is not None, "ValidateCLIOptions#verbose must be either True or False"
+    def __init__(self, verbose: bool = False, cwd: str = None, current_branch: str = None):
         self.cwd = cwd
         self.verbose = verbose
         self.current_branch = current_branch
 
     def __str__(self):
-        return 'ValidateCLIOptions'
+        return "".join([
+            "ValidateCLIOptions(",
+            ', '.join(
+                map(
+                    lambda pair: f"{pair[0]}={pair[1]}",
+                    [
+                        ["cwd", self.cwd],
+                        ["verbose", self.verbose],
+                        ["current_branch", self.current_branch]
+                    ]
+                )
+            ),
+            ')'
+        ])
 
     def to_dict(self):
         return {

@@ -1,3 +1,4 @@
+from typing import Iterator
 from git import Repo
 from os import path
 import tempfile
@@ -5,7 +6,7 @@ from contextlib import contextmanager
 
 
 @contextmanager
-def temp_repo() -> Repo:
+def temp_repo() -> Iterator[Repo]:
     with tempfile.TemporaryDirectory() as tmpdirname:
         print(tmpdirname)
         example_file_name = path.join(tmpdirname, "example.txt")
