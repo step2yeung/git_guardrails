@@ -1,7 +1,9 @@
 
 
 class ValidateCLIOptions:
-    def __init__(self, verbose: bool, current_branch: str):
+    def __init__(self, verbose: bool, cwd: str, current_branch: str):
+        assert verbose is not None, "ValidateCLIOptions#verbose must be either True or False"
+        self.cwd = cwd
         self.verbose = verbose
         self.current_branch = current_branch
 
@@ -10,6 +12,7 @@ class ValidateCLIOptions:
 
     def to_dict(self):
         return {
+            "cwd": self.cwd,
             "verbose": self.verbose,
             "current_branch": self.current_branch
         }

@@ -44,9 +44,8 @@ jobs:
     - name: PEX Distributable
       run: |
         make pex
-    - name: Lint with flake8
-      run: |
-        make lint
+    - name: Flake8 action
+      uses: suo/flake8-github-action@v1
     - name: Test with pytest
       run: |
         make test
@@ -83,35 +82,30 @@ jobs:
     - name: Install dependencies & build
       run: |
         make
-    - name: PEX Distributable
-      run: |
-        make pex
     - name: Test with pytest
       run: |
         pytest
 
   os_compat:
-    needs: [build, python_compat]
+    needs: build
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         python-version: [3.9]
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+        - os: ubuntu-latest
+          path: ~/.cache/pip
+        - os: macos-latest
+          path: ~/Library/Caches/pip
+        - os: windows-latest
+          path: ~\AppData\Local\pip\Cache
     steps:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
-      if: startsWith(runner.os, 'Linux')
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-${{ matrix.python-version }}-pip-
-
-    - uses: actions/cache@v2
-      if: startsWith(runner.os, 'macOS')
-      with:
-        path: ~/Library/Caches/pip
+        path: ${{ matrix.path }}
         key: ${{ runner.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-${{ matrix.python-version }}-pip-
@@ -122,9 +116,7 @@ jobs:
     - name: Install dependencies & build
       run: |
         make
-    - name: PEX Distributable
-      run: |
-        make pex
     - name: Test with pytest
+      if: startsWith(runner.os, 'macOS')
       run: |
         pytest
