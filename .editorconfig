@@ -1,2 +1,6 @@
 [Makefile]
 indent_style = tab
+
+[*.py]
+indent_style = space
+indent_style = 2
