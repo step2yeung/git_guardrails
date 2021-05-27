@@ -52,6 +52,70 @@ async def test_branch_name_infer():
         assert await o.getCurrentBranchName(repo) == "example_branch", "absence of --current-branch results in inference"
 
 
+def test_color_arg_passthrough():
+    o1 = ValidateOptions(ValidateCLIOptions(color=True))
+    assert o1.isTerminalColorSupported() == True, "--color passes through correctly in ValidateOptions (True)"
+    o2 = ValidateOptions(ValidateCLIOptions(color=False))
+    assert o2.isTerminalColorSupported() == False, "--color passes through correctly in ValidateOptions (False)"
+
+
+def test_color_arg_infer():
+    """
+    absence of --color argument results in inference
+    """
+    o = ValidateOptions(ValidateCLIOptions())
+
+    callback_invocation_count = 0
+
+    def fake_color_detector() -> bool:
+        nonlocal callback_invocation_count
+        callback_invocation_count += 1
+        return True
+
+    def fake_no_color_detector() -> bool:
+        nonlocal callback_invocation_count
+        callback_invocation_count += 1
+        return False
+
+    assert callback_invocation_count == 0
+    assert o.isTerminalColorSupported(fake_color_detector) == True
+    assert callback_invocation_count == 1
+    assert o.isTerminalColorSupported(fake_no_color_detector) == False
+    assert callback_invocation_count == 2
+
+
+def test_tty_arg_passthrough():
+    o1 = ValidateOptions(ValidateCLIOptions(tty=True))
+    assert o1.isTTYSupported() == True, "--tty passes through correctly in ValidateOptions (True)"
+    o2 = ValidateOptions(ValidateCLIOptions(tty=False))
+    assert o2.isTTYSupported() == False, "--tty passes through correctly in ValidateOptions (False)"
+
+
+def test_tty_arg_infer():
+    """
+    absence of --tty argument results in inference
+    """
+    o = ValidateOptions(ValidateCLIOptions())
+
+    callback_invocation_count = 0
+
+    def fake_tty_detector() -> bool:
+        nonlocal callback_invocation_count
+        callback_invocation_count += 1
+        return True
+
+    def fake_no_tty_detector() -> bool:
+        nonlocal callback_invocation_count
+        callback_invocation_count += 1
+        return False
+
+    assert callback_invocation_count == 0
+    assert o.isTTYSupported(fake_tty_detector) == True
+    assert callback_invocation_count == 1
+    assert o.isTTYSupported(fake_no_tty_detector) == False
+    assert callback_invocation_count == 2
+
+
 def test_cwd_passthrough():
     o = ValidateOptions(ValidateCLIOptions(cwd="/fizz"))
     assert o.getWorkingDirectory() == "/fizz"

@@ -1,5 +1,8 @@
 from os import getcwd
+from typing import Callable
 from git import Repo
+from git_guardrails.cli.color import supports_color
+from git_guardrails.cli.tty import is_tty_supported
 
 from git_guardrails.validate.cli_options import ValidateCLIOptions
 
@@ -39,6 +42,18 @@ class ValidateOptions:
             return self.cliOpts.cwd
         else:
             return getcwd()
+
+    def isTerminalColorSupported(self, color_support_checker: Callable[[], bool] = supports_color) -> bool:
+        if (self.cliOpts.color is not None):
+            return self.cliOpts.color
+        else:
+            return color_support_checker()
+
+    def isTTYSupported(self, tty_support_checker: Callable[[], bool] = is_tty_supported) -> bool:
+        if (self.cliOpts.tty is not None):
+            return self.cliOpts.tty
+        else:
+            return tty_support_checker()
 
     async def to_dict(self, repo):
         return {

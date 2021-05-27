@@ -29,6 +29,24 @@ def test_retrieval_of_cwd():
     assert o2.cwd == "fizz", "cwd is passed through, if explicitly set"
 
 
+def test_retrieval_of_color():
+    o1 = ValidateCLIOptions()
+    assert o1.color is None, "color is None if not explicitly set"
+    o2 = ValidateCLIOptions(color=True)
+    assert o2.color == True, "color is passed through, if explicitly set"
+    o3 = ValidateCLIOptions(color=False)
+    assert o3.color == False, "color is passed through, if explicitly set"
+
+
+def test_retrieval_of_tty():
+    o1 = ValidateCLIOptions()
+    assert o1.tty is None, "tty is None if not explicitly set"
+    o2 = ValidateCLIOptions(tty=True)
+    assert o2.tty == True, "tty is passed through, if explicitly set"
+    o3 = ValidateCLIOptions(tty=False)
+    assert o3.tty == False, "tty is passed through, if explicitly set"
+
+
 def test_to_str():
     o1 = ValidateCLIOptions()
     assert str(o1) == "ValidateCLIOptions(cwd=None, verbose=False, current_branch=None)"

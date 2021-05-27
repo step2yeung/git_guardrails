@@ -1,9 +1,16 @@
 
 class ValidateCLIOptions:
-    def __init__(self, verbose: bool = False, cwd: str = None, current_branch: str = None):
+    def __init__(self,
+                 verbose: bool = False,
+                 cwd: str = None,
+                 current_branch: str = None,
+                 color: bool = None,
+                 tty: bool = None):
         self.cwd = cwd
         self.verbose = verbose
         self.current_branch = current_branch
+        self.color = color
+        self.tty = tty
 
     def __str__(self):
         return "".join([
