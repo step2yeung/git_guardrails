@@ -42,14 +42,14 @@ def supports_color() -> bool:
                 return reg_key_value == 1
 
     return is_tty_supported() and (
-        sys.platform != 'win32' or
-        HAS_COLORAMA or
-        'ANSICON' in os.environ or
+        sys.platform != 'win32' or  # noqa: W504
+        HAS_COLORAMA or  # noqa: W504
+        'ANSICON' in os.environ or  # noqa: W504
         # Windows Terminal supports VT codes.
-        'WT_SESSION' in os.environ or
+        'WT_SESSION' in os.environ or  # noqa: W504
         # Microsoft Visual Studio Code's built-in terminal supports colors.
-        os.environ.get('TERM_PROGRAM') == 'vscode' or
-        os.environ.get('TERM_PROGRAM') == 'vscode' or
+        os.environ.get('TERM_PROGRAM') == 'vscode' or  # noqa: W504
+        os.environ.get('TERM_PROGRAM') == 'vscode' or  # noqa: W504
         vt_codes_enabled_in_windows_registry()
     )
 
