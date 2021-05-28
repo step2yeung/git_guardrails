@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from logging import DEBUG, Logger
 import tempfile
-from typing import IO, Iterator
+from typing import IO, Iterator, List
 from git_guardrails.cli.logging import create_cli_logger
 
 
@@ -10,7 +10,7 @@ class FakeLoggerWrapper:
         self.logger = logger
         self.__tmp_file = tmp_file
 
-    def get_logged_output(self) -> list[str]:
+    def get_logged_output(self) -> List[str]:
         self.__tmp_file.seek(0)
         return self.__tmp_file.readlines()
 
