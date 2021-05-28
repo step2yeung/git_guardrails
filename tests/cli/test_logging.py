@@ -61,4 +61,3 @@ def test_logger_info_log_level():
         assert len(log_lines) == 2, "two lines of output"
         assert log_lines[0] == f"hello mars{Fore.RESET+Style.RESET_ALL}\n"
         assert log_lines[1] == f"{Fore.YELLOW}[WARNING]: zoom{Fore.RESET+Style.RESET_ALL}\n"
-
