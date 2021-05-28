@@ -3,7 +3,8 @@ import asyncio
 
 
 def coroutine(f):
-    ff = asyncio.coroutine(f)
+    async def ff():
+        await f()
 
     def wrapper(*args, **kwargs):
         loop = asyncio.get_event_loop()
