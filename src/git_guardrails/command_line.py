@@ -3,6 +3,8 @@ from git_guardrails.cli.ux import CLIUX, generate_welcome_banner
 from git_guardrails.coroutine import coroutine
 from git_guardrails.validate import do_validate
 from git_guardrails.validate.cli_options import ValidateCLIOptions
+from git_guardrails.validate.options import ValidateOptions
+from logging import DEBUG, INFO
 
 CONTEXT_SETTINGS = dict(
     help_option_names=['-h', '--help'],
@@ -18,19 +20,30 @@ async def main():
 
 
 @main.command()
-@click.option('--verbose/--no-verbose', type=bool, default=False)
-@click.option('--working-directory', type=str)
+@click.option('-v', '--verbose/--no-verbose', type=bool, default=False)
+@click.option('--cwd', type=str)
 @click.option('--current-branch', type=str)
 @click.option('--color/--no-color', type=bool, default=True)
 @click.option('--tty/--no-tty', type=bool)
 @coroutine
 async def validate(verbose: bool,
-                   working_directory: str,
+                   cwd: str,
                    current_branch: str,
                    color: bool,
                    tty: bool):
     """Examine the current Git workspace and perform some sanity-checking"""
-    cliOptions = ValidateCLIOptions(verbose=verbose, working_directory=working_directory,
-                                    current_branch=current_branch, color=color, tty=tty)
-    cli = CLIUX()
-    await do_validate(cli, cliOptions)
+    cliOptions = ValidateCLIOptions(
+        verbose=verbose,
+        cwd=cwd,
+        current_branch=current_branch,
+        color=color,
+        tty=tty
+    )
+    opts = ValidateOptions(cliOptions)
+    log_level = DEBUG if opts.isVerbose() else INFO
+    cli = CLIUX(
+        log_level=log_level,
+        supports_color=opts.isTerminalColorSupported(),
+        supports_tty=opts.isTTYSupported()
+    )
+    await do_validate(cli, opts)
