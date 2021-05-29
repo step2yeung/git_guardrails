@@ -12,4 +12,5 @@ async def say_after(delay, what):
 
 async def do_validate(cli: CLIUX, opts: ValidateOptions):
     repo = Repo(opts.getWorkingDirectory())
-    cli.info(f"Beginning validation: {await opts.getCurrentBranchName(repo)}")
+    branch_name = await opts.getCurrentBranchName(repo)
+    cli.info(f"Beginning validation: {branch_name}")
