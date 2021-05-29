@@ -33,9 +33,16 @@ async def do_validate(cli: CLIUX, opts: ValidateOptions):
         remotes = repo.remotes
         num_remotes = len(remotes)
         if (num_remotes == 0):
-            raise NonApplicableSituationException('No git remotes found',
-                                                  f"{format_cli_command('git_guardrails validate')} is intended for " +
-                                                  "use when pushing new code to a remote, and no remotes were found. ")
+            raise NonApplicableSituationException(
+                'No git remotes found',
+                "".join(
+                    [
+                        format_cli_command('git_guardrails validate'),
+                        " is intended for ",
+                        "use when pushing new code to a remote, and no remotes were found. "
+                    ]
+                )
+            )
         active_branch = await opts.getCurrentBranchName(repo)
         cli.info(f"active_branch: {active_branch}")
         default_branch = await get_default_git_branch(cwd)
