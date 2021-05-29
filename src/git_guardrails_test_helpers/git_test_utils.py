@@ -1,3 +1,4 @@
+from os import path
 from typing import Iterator
 from git import Repo
 import tempfile
@@ -15,8 +16,8 @@ def temp_repo_in_dir(dir: str) -> Repo:
 
 
 @contextmanager
-def create_example_file_in_repo(repo: Repo, path: str, content: str) -> Iterator[str]:
-    full_file_path = path.join([repo.working_dir, path])
+def create_example_file_in_repo(repo: Repo, file_path: str, content: str) -> Iterator[str]:
+    full_file_path = path.join(repo.working_dir, file_path)
     with open(full_file_path, "w+") as f:
         f.write(content)
         repo.index.add([full_file_path])
@@ -29,7 +30,7 @@ def temp_repo() -> Iterator[Repo]:
         repo = temp_repo_in_dir(tmpdirname)
         with create_example_file_in_repo(
             repo=repo,
-            path="example.txt",
+            file_path="example.txt",
             content="Example content"
         ) as _:
             yield repo

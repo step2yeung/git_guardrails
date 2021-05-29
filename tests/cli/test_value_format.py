@@ -1,4 +1,3 @@
-
 from git_guardrails.cli.color import strip_ansi
 from git_guardrails.cli.value_format import TOTAL_RESET, format_branch_name
 from git_guardrails.cli.value_format import format_cli_command, format_commit, format_integer, format_sha
