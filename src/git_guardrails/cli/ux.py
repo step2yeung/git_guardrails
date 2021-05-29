@@ -1,6 +1,4 @@
 from logging import Logger
-import sys
-from typing import TextIO
 from colorama import init as initColorama, Style, Fore
 from git_guardrails.cli.logging import create_cli_logger
 from git_guardrails.errors import NonApplicableSituationException, UnhandledSituationException
@@ -19,7 +17,11 @@ def generate_welcome_banner():
 
 
 class CLIUX:
-    def __init__(self, supports_color: bool, supports_tty: bool, log_level: int, logger: Logger=None):
+    def __init__(self,
+                 supports_color: bool,
+                 supports_tty: bool,
+                 log_level: int,
+                 logger: Logger = None):
         self.log_level = log_level
         self.supports_color = supports_color
         self.supports_tty = supports_tty

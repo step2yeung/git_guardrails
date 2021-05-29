@@ -1,6 +1,5 @@
 from logging import INFO, WARNING
 from colorama import Fore, Style
-
 from git_guardrails_test_helpers.logger_test_utils import fake_logger
 
 

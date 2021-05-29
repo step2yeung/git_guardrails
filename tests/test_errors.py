@@ -1,4 +1,3 @@
-import unittest
 from unittest.mock import patch
 from git_guardrails.cli.color import strip_ansi
 from git_guardrails.errors import NonApplicableSituationException
@@ -26,6 +25,7 @@ WHAT TO DO NEXT
 - There is no reason to think anything is wrong, and no user action is required
 """
 
+
 @patch('builtins.input', return_value="continue")
 def test_unhandled_situation_exception_user_continue(_mock_input):
     with fake_cliux() as (cli, get_lines):
@@ -48,6 +48,7 @@ WHAT TO DO NEXT
 - You may abort by pressing Ctrl + C
 [WARNING]: Proceeding at user's request
 """
+
 
 @patch('builtins.input', return_value="retry, I am not sure")
 def test_unhandled_situation_exception_user_invalid_response(_mock_input):

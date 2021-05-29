@@ -13,6 +13,7 @@ def test_cliux_creation():
     cli = CLIUX(supports_color=False, log_level=DEBUG, supports_tty=False)
     assert cli is not None
 
+
 def test_cliux_logging():
     with fake_cliux() as (cli, get_lines):
         cli.info('grapes')
