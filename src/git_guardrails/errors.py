@@ -16,7 +16,7 @@ class ExceptionWithNextBestActions(Exception):
         self.next_best_actions = next_best_actions
 
     def __str__(self):
-        formatted_title = f"{Style.BRIGHT}{self.what_happened.upper()} {Style.RESET_ALL}"
+        formatted_title = f"{Style.BRIGHT}{self.what_happened.upper()}{Style.RESET_ALL}"
         divider = "----------------------------------------"
         more_info_title = f"{Style.DIM}MORE INFORMATION{Style.RESET_ALL}"
         next_actions_title = f"""

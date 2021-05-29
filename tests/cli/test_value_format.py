@@ -24,5 +24,6 @@ def test_format_integer():
 
 def test_format_commit():
     with git_test_utils.temp_repo() as repo:
+        repo.index.commit("first commit")
         commit = repo.active_branch.commit
         assert strip_ansi(format_commit(commit)) == f"{commit.hexsha[0:8]} <{commit.author.email}> - first commit"
