@@ -27,5 +27,5 @@ def format_sha(sha: str, return_to_color=TOTAL_RESET) -> str:
 
 def format_commit(c: Commit, return_to_color=TOTAL_RESET) -> str:
     lines = split("\n", c.message)
-    return f"""{format_sha(c.hexsha)} {Fore.LIGHTBLUE_EX} < {c.author.email} > {Fore.WHITE} - {
+    return f"""{format_sha(c.hexsha)} {Fore.LIGHTBLUE_EX}<{c.author.email}>{Fore.WHITE} - {
         Style.DIM}{lines[0][0:30]}{return_to_color}"""
