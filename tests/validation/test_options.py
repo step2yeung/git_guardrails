@@ -29,6 +29,7 @@ def test_to_string():
 
 async def test_to_dict():
     with temp_repo() as repo:
+        repo.index.commit("first commit")
         o = ValidateOptions(ValidateCLIOptions(verbose=True, cwd="foo", current_branch="fizz"))
         d = await o.to_dict(repo)
         assert d["verbose"] == True
@@ -38,6 +39,7 @@ async def test_to_dict():
 
 async def test_branch_name_passthrough():
     with temp_repo() as repo:
+        repo.index.commit("first commit")
         repo.create_head("special_branch")
         repo.git.checkout("special_branch")
         o = ValidateOptions(ValidateCLIOptions(verbose=True, current_branch="fizz"))
@@ -46,6 +48,7 @@ async def test_branch_name_passthrough():
 
 async def test_branch_name_infer():
     with temp_repo() as repo:
+        repo.index.commit("first commit")
         repo.create_head("example_branch")
         repo.git.checkout("example_branch")
         o = ValidateOptions(ValidateCLIOptions())
