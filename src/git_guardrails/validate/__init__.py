@@ -39,7 +39,7 @@ async def do_validate(cli: CLIUX, opts: ValidateOptions):
                     [
                         format_cli_command('git_guardrails validate'),
                         " is intended for ",
-                        "use when pushing new code to a remote, and no remotes were found. "
+                        "use when pushing new code to a remote, and no remotes were found."
                     ]
                 )
             )

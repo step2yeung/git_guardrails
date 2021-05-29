@@ -15,7 +15,7 @@ pytestmark = pytest.mark.asyncio
 
 
 @patch('builtins.input', return_value="continue")
-async def test_do_validate(mock_input):
+async def test_do_validate_with_remote(mock_input):
     with temp_repo() as upstream:
         assert upstream is not None
         upstream.index.commit("first commit")
@@ -44,4 +44,27 @@ async def test_do_validate(mock_input):
                     assert strip_ansi("".join(get_lines())) == f"""[INFO]: active_branch: feature/123
 [INFO]: default_branch: {downstream_default_branch}
 [INFO]: merge_bases: {merge_base.hexsha[0:8]}
+"""
+
+
+@patch('builtins.input', return_value="continue")
+async def test_do_validate_no_remote(mock_input):
+    with temp_repo() as upstream:
+        assert upstream is not None
+        upstream.index.commit("first commit")
+        assert upstream.is_dirty() == False
+        assert upstream.active_branch.name in ["master", "main"]
+
+        with fake_cliux() as (cli, get_lines):
+            opts = ValidateOptions(ValidateCLIOptions(verbose=True, cwd=upstream.working_dir))
+            await do_validate(cli=cli, opts=opts)
+            assert strip_ansi("".join(get_lines())) == """[INFO]: git_guardrails has completed without taking any action.
+
+THERE'S NOTHING TO DO BECAUSE: NO GIT REMOTES FOUND
+----------------------------------------
+MORE INFORMATION
+git_guardrails validate is intended for use when pushing new code to a remote, and no remotes were found.
+
+WHAT TO DO NEXT
+- There is no reason to think anything is wrong, and no user action is required
 """
