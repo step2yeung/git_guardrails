@@ -48,7 +48,8 @@ async def do_validate(cli: CLIUX, opts: ValidateOptions):
         default_branch = await get_default_git_branch(cwd)
         cli.info(f"default_branch: {default_branch}")
         merge_bases = repo.merge_base(default_branch, active_branch)
-        cli.info(f"merge_bases: {merge_bases}")
+        merge_bases_csv = ", ".join(map(lambda c: c.hexsha[0:8], merge_bases))
+        cli.info(f"merge_bases: {merge_bases_csv}")
         num_merge_bases = len(merge_bases)
         if (num_merge_bases == 0):
             raise UnhandledSituationException('No merge-base commit found',
@@ -57,7 +58,7 @@ async def do_validate(cli: CLIUX, opts: ValidateOptions):
                                               } and {
                                                 format_branch_name(active_branch)
                                                 } could be found, so validation could not be performed.""")
-        if (num_merge_bases == 1):
+        if (num_merge_bases > 1):
             description = " ".join(
                 [f"Multiple ({format_integer(num_merge_bases)}) merge-base commits between branches",
                  format_branch_name(default_branch),
