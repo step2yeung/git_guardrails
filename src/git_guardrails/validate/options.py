@@ -1,6 +1,6 @@
 from os import getcwd
 from typing import Callable
-from git import Repo
+from git import Repo  # type: ignore
 from git_guardrails.cli.color import supports_color
 from git_guardrails.cli.tty import is_tty_supported
 

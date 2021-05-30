@@ -1,6 +1,6 @@
 from re import split
 from colorama import Fore, Style, Back
-from git.objects.commit import Commit
+from git.objects.commit import Commit  # type: ignore
 
 TOTAL_RESET = Style.RESET_ALL + Fore.RESET + Back.RESET
 

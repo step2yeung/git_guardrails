@@ -1,12 +1,12 @@
 from os import path
 from typing import Iterator
-from git import Repo
+from git import Repo  # type: ignore
 import tempfile
 from contextlib import contextmanager
 
 
 @contextmanager
-def temp_dir() -> Iterator[tempfile.TemporaryDirectory]:
+def temp_dir() -> Iterator[str]:
     with tempfile.TemporaryDirectory() as tmpdirname:
         yield tmpdirname
 
