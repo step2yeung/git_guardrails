@@ -1,7 +1,7 @@
 from git.refs.remote import RemoteReference  # type: ignore
 from git.repo import Repo  # type: ignore
 import subprocess
-from typing import List, Literal, Union
+from typing import List
 
 
 def git_default_branch(repo: Repo):
@@ -15,7 +15,7 @@ def git_default_branch(repo: Repo):
     return branch_name
 
 
-def git_ls_remote(repo: Repo, ref: RemoteReference, ref_types: List[Union[Literal["heads", "tags"]]]) -> str:
+def git_ls_remote(repo: Repo, ref: RemoteReference, ref_types: List[str]) -> str:
     command_args = ['git', 'ls-remote']
     if ("heads" in ref_types):
         command_args.append("-h")
