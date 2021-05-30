@@ -14,3 +14,4 @@ typed-ast==1.4.3
 typing-extensions==3.10.0.0
 yaspin==2.0.0
 Sphinx==4.0.2
+sphinx-rtd-theme==0.5.2
