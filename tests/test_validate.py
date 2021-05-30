@@ -7,7 +7,7 @@ from git_guardrails.validate.options import ValidateOptions
 from git_guardrails.validate.cli_options import ValidateCLIOptions
 from git_guardrails_test_helpers.git_test_utils import create_example_file_in_repo, temp_dir, temp_repo
 from git_guardrails.git_utils import git_default_branch
-from git.repo.base import Repo
+from git.repo.base import Repo  # type: ignore
 
 
 # All test coroutines will be treated as marked.

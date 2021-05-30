@@ -1,8 +1,8 @@
 import asyncio
 from functools import reduce
-from yaspin import yaspin
+from yaspin import yaspin  # type: ignore
 
-from git.repo.base import Repo
+from git.repo.base import Repo  # type: ignore
 from git_guardrails.cli.ux import CLIUX
 from git_guardrails.cli.value_format import format_branch_name, format_cli_command, format_commit, format_integer
 from git_guardrails.errors import NonApplicableSituationException, UnhandledSituationException
