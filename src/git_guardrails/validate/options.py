@@ -25,31 +25,31 @@ class ValidateOptions:
             ')'
         ])
 
-    def isVerbose(self) -> bool:
+    def is_verbose(self) -> bool:
         if self.cliOpts.verbose is True:
             return True
         else:
             return False
 
-    async def getCurrentBranchName(self, repo: Repo) -> str:
+    async def get_current_branch_name(self, repo: Repo) -> str:
         if (self.cliOpts.current_branch is not None):
             return self.cliOpts.current_branch
         else:
             return repo.active_branch.name
 
-    def getWorkingDirectory(self) -> str:
+    def get_cwd(self) -> str:
         if (self.cliOpts.cwd is not None):
             return self.cliOpts.cwd
         else:
             return getcwd()
 
-    def isTerminalColorSupported(self, color_support_checker: Callable[[], bool] = supports_color) -> bool:
+    def is_terminal_color_supported(self, color_support_checker: Callable[[], bool] = supports_color) -> bool:
         if (self.cliOpts.color is not None):
             return self.cliOpts.color
         else:
             return color_support_checker()
 
-    def isTTYSupported(self, tty_support_checker: Callable[[], bool] = is_tty_supported) -> bool:
+    def is_terminal_tty_supported(self, tty_support_checker: Callable[[], bool] = is_tty_supported) -> bool:
         if (self.cliOpts.tty is not None):
             return self.cliOpts.tty
         else:
@@ -57,7 +57,7 @@ class ValidateOptions:
 
     async def to_dict(self, repo):
         return {
-            "verbose": self.isVerbose(),
-            "current_branch": await self.getCurrentBranchName(repo),
-            "cwd": self.getWorkingDirectory()
+            "verbose": self.is_verbose(),
+            "current_branch": await self.get_current_branch_name(repo),
+            "cwd": self.get_cwd()
         }

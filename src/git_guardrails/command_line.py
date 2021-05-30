@@ -40,10 +40,10 @@ async def validate(verbose: bool,
         tty=tty
     )
     opts = ValidateOptions(cliOptions)
-    log_level = DEBUG if opts.isVerbose() else INFO
+    log_level = DEBUG if opts.is_verbose() else INFO
     cli = CLIUX(
         log_level=log_level,
-        supports_color=opts.isTerminalColorSupported(),
-        supports_tty=opts.isTTYSupported()
+        supports_color=opts.is_terminal_color_supported(),
+        supports_tty=opts.is_terminal_tty_supported()
     )
     await do_validate(cli, opts)
