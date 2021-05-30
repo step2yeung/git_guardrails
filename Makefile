@@ -1,7 +1,7 @@
 build: compile
 
 compile: clean
-	python3 -m pip install --upgrade pip && python3 -m pip install flake8 pytest && pip install -r requirements.txt
+	python3 -m pip install --upgrade pip && python3 -m pip install flake8 pytest && pip install -r requirements.txt && pip install -r requirements_dev.txt
 pex:
 	pex -r requirements.txt -o git_guardrails.pex -e git_guardrails.command_line:main . --validate-entry-point
 
