@@ -13,6 +13,10 @@ def format_branch_name(name: str, return_to_color=TOTAL_RESET) -> str:
     return __format_string(name, Fore.YELLOW, return_to_color)
 
 
+def format_remote_name(name: str, return_to_color=TOTAL_RESET) -> str:
+    return __format_string(name, Fore.MAGENTA, return_to_color)
+
+
 def format_cli_command(cmd: str, return_to_color=TOTAL_RESET) -> str:
     return __format_string(cmd, Back.BLACK + Fore.GREEN, return_to_color)
 

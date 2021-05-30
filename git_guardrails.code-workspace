@@ -6,7 +6,8 @@
       "**/*.code-search": true,
       "src/**/*.egg-info": true,
       "src/**/__pycache__": true
-    }
+    },
+    "python.pythonPath": "/usr/bin/python3"
   },
   "folders": [
     {

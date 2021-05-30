@@ -1,5 +1,5 @@
 from git_guardrails.cli.color import strip_ansi
-from git_guardrails.cli.value_format import TOTAL_RESET, format_branch_name
+from git_guardrails.cli.value_format import TOTAL_RESET, format_branch_name, format_remote_name
 from git_guardrails.cli.value_format import format_cli_command, format_commit, format_integer, format_sha
 from colorama import Fore, Back
 from git_guardrails_test_helpers import git_test_utils
@@ -11,6 +11,10 @@ def test_format_branch_name():
 
 def test_format_sha():
     assert format_sha("foo") == f"{Fore.MAGENTA}foo{TOTAL_RESET}"
+
+
+def test_format_remote_name():
+    assert format_remote_name("foo") == f"{Fore.MAGENTA}foo{TOTAL_RESET}"
 
 
 def test_format_cli_command():

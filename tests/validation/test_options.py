@@ -16,10 +16,10 @@ def test_creation():
 
 def test_verbosity_passthrough():
     o = ValidateOptions(ValidateCLIOptions(verbose=True))
-    assert o.isVerbose() is True, "--verbose results in isVerbose() returning True"
+    assert o.is_verbose() is True, "--verbose results in isVerbose() returning True"
 
     o2 = ValidateOptions(ValidateCLIOptions())
-    assert o2.isVerbose() is False, "--verbose results in isVerbose() returning False"
+    assert o2.is_verbose() is False, "--verbose results in isVerbose() returning False"
 
 
 def test_to_string():
@@ -43,7 +43,7 @@ async def test_branch_name_passthrough():
         repo.create_head("special_branch")
         repo.git.checkout("special_branch")
         o = ValidateOptions(ValidateCLIOptions(verbose=True, current_branch="fizz"))
-        assert await o.getCurrentBranchName(repo) == "fizz", "--current-branch supercedes git repo state"
+        assert await o.get_current_branch_name(repo) == "fizz", "--current-branch supercedes git repo state"
 
 
 async def test_branch_name_infer():
@@ -52,14 +52,14 @@ async def test_branch_name_infer():
         repo.create_head("example_branch")
         repo.git.checkout("example_branch")
         o = ValidateOptions(ValidateCLIOptions())
-        assert await o.getCurrentBranchName(repo) == "example_branch", "absence of --current-branch results in inference"
+        assert await o.get_current_branch_name(repo) == "example_branch", "absence of --current-branch results in inference"
 
 
 def test_color_arg_passthrough():
     o1 = ValidateOptions(ValidateCLIOptions(color=True))
-    assert o1.isTerminalColorSupported() == True, "--color passes through correctly in ValidateOptions (True)"
+    assert o1.is_terminal_color_supported() == True, "--color passes through correctly in ValidateOptions (True)"
     o2 = ValidateOptions(ValidateCLIOptions(color=False))
-    assert o2.isTerminalColorSupported() == False, "--color passes through correctly in ValidateOptions (False)"
+    assert o2.is_terminal_color_supported() == False, "--color passes through correctly in ValidateOptions (False)"
 
 
 def test_color_arg_infer():
@@ -81,17 +81,17 @@ def test_color_arg_infer():
         return False
 
     assert callback_invocation_count == 0
-    assert o.isTerminalColorSupported(fake_color_detector) == True
+    assert o.is_terminal_color_supported(fake_color_detector) == True
     assert callback_invocation_count == 1
-    assert o.isTerminalColorSupported(fake_no_color_detector) == False
+    assert o.is_terminal_color_supported(fake_no_color_detector) == False
     assert callback_invocation_count == 2
 
 
 def test_tty_arg_passthrough():
     o1 = ValidateOptions(ValidateCLIOptions(tty=True))
-    assert o1.isTTYSupported() == True, "--tty passes through correctly in ValidateOptions (True)"
+    assert o1.is_terminal_tty_supported() == True, "--tty passes through correctly in ValidateOptions (True)"
     o2 = ValidateOptions(ValidateCLIOptions(tty=False))
-    assert o2.isTTYSupported() == False, "--tty passes through correctly in ValidateOptions (False)"
+    assert o2.is_terminal_tty_supported() == False, "--tty passes through correctly in ValidateOptions (False)"
 
 
 def test_tty_arg_infer():
@@ -113,17 +113,17 @@ def test_tty_arg_infer():
         return False
 
     assert callback_invocation_count == 0
-    assert o.isTTYSupported(fake_tty_detector) == True
+    assert o.is_terminal_tty_supported(fake_tty_detector) == True
     assert callback_invocation_count == 1
-    assert o.isTTYSupported(fake_no_tty_detector) == False
+    assert o.is_terminal_tty_supported(fake_no_tty_detector) == False
     assert callback_invocation_count == 2
 
 
 def test_cwd_passthrough():
     o = ValidateOptions(ValidateCLIOptions(cwd="/fizz"))
-    assert o.getWorkingDirectory() == "/fizz"
+    assert o.get_cwd() == "/fizz"
 
 
 def test_cwd_infer():
     o = ValidateOptions(ValidateCLIOptions())
-    assert o.getWorkingDirectory() == getcwd(), "absence of --cwd results in inference"
+    assert o.get_cwd() == getcwd(), "absence of --cwd results in inference"
