@@ -1,5 +1,8 @@
 build: compile
 
+setup:
+	python3 -m pip install --upgrade pip && pip install pipenv
+
 compile: clean
 	python3 -m pip install --upgrade pip && pip install pipenv && pipenv install
 pex:
@@ -23,7 +26,7 @@ run-validate: build
 
 .PHONY: clean docs
 
-clean:
+clean: setup
 	pipenv clean && rm -rf src/**/*.egg-info build dist $${PEX_ROOT}/build/git_guardrails-*.whl
 
 # Minimal makefile for Sphinx documentation
