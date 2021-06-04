@@ -1,15 +1,15 @@
 build: compile
 
 compile: clean
-	python3 -m pip install --upgrade pip && python3 -m pip install flake8 pytest && pip install -r requirements.txt && pip install -r requirements_dev.txt
+	python3 -m pip install --upgrade pip && pip install pipenv && pipenv install
 pex:
-	pex -r requirements.txt -o git_guardrails.pex -e git_guardrails.command_line:main . --validate-entry-point
+	pipenv run pex -r requirements.txt -o git_guardrails.pex -e git_guardrails.command_line:main . --validate-entry-point
 
 deploy: build
 	cp git_guardrails.pex /target/destination.pex
 
 test: build
-	pytest
+	pipenv run pytest
 
 lint: build
 	flake8
@@ -18,10 +18,13 @@ lint: build
 watch-test: build
 	ptw
 
+run-validate: build
+	pipenv run git_guardrails validate
+
 .PHONY: clean docs
 
 clean:
-	rm -rf src/**/*.egg-info build dist $${PEX_ROOT}/build/git_guardrails-*.whl
+	pipenv clean && rm -rf src/**/*.egg-info build dist $${PEX_ROOT}/build/git_guardrails-*.whl
 
 # Minimal makefile for Sphinx documentation
 #

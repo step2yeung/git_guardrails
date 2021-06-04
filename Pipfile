@@ -1,0 +1,29 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+click = "*"
+colorama = "*"
+gitdb = "*"
+gitpython = "*"
+termcolor = "*"
+yaspin = "*"
+
+[dev-packages]
+docutils = "*"
+mypy = "*"
+pex = "*"
+pytest-asyncio = "*"
+pytest-cov = "*"
+pytest-watch = "*"
+pytest = "*"
+sphinx = "*"
+sphinx-rtd-theme = "*"
+typed-ast = "*"
+typing-extensions = "*"
+pipenv-pex = "*"
+
+[requires]
+python_version = "3.9"
