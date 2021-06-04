@@ -1,6 +1,6 @@
 import click
 from functools import reduce
-from git.refs.head import Head
+from git.refs.head import Head  # type: ignore
 from git.remote import Remote  # type: ignore
 from yaspin import yaspin  # type: ignore
 

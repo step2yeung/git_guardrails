@@ -1,6 +1,6 @@
-from logging import DEBUG, INFO
+from logging import INFO
 from unittest.mock import patch
-from git.refs.head import Head
+from git.refs.head import Head  # type: ignore
 import pytest
 from contextlib import contextmanager
 from typing import Iterator, Tuple
