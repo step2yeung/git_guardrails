@@ -1,10 +1,10 @@
 build: compile
 
 setup:
-	python3 -m pip install --upgrade pip && pip install pipenv
+	python3 -m pip install --upgrade pip && pip install pipenv pex
 
 compile: clean
-	python3 -m pip install --upgrade pip && pip install pipenv && pipenv install
+	pipenv install
 pex:
 	pipenv run pex -r requirements.txt -o git_guardrails.pex -e git_guardrails.command_line:main . --validate-entry-point
 
