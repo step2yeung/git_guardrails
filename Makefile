@@ -15,11 +15,11 @@ test: build
 	pipenv run pytest
 
 lint: build
-	flake8
-	mypy .
+	pipenv run flake8
+	pipenv run mypy .
 
 watch-test: build
-	ptw
+	pipenv run ptw
 
 run-validate: build
 	pipenv run git_guardrails validate
