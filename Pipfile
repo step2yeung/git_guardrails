@@ -24,6 +24,3 @@ sphinx-rtd-theme = "*"
 typed-ast = "*"
 typing-extensions = "*"
 pipenv-pex = "*"
-
-[requires]
-python_version = "3.6"
