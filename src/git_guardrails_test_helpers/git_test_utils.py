@@ -35,6 +35,10 @@ def temp_repo() -> Iterator[Repo]:
             file_path="example.txt",
             content="Example content"
         ) as _:
+            commit_all_modified_tracked_files(repo, 'initial commit')
+            assert repo is not None
+            assert repo.is_dirty() == False
+            assert repo.active_branch.name in ["master", "main"]
             yield repo
 
 
@@ -59,7 +63,7 @@ def create_files_with_content_in_repo(repo: Repo, requested_commits: List[Tuple[
 
 
 @contextmanager
-def create_temp_clone(original: Repo, branches_to_checkout: List[str] = []) -> Iterator[Repo]:
+def temp_repo_clone(original: Repo, branches_to_checkout: List[str] = []) -> Iterator[Repo]:
     original_default_branch = original.active_branch
     with temp_dir() as dir:
         new_clone = original.clone(dir)
@@ -70,6 +74,9 @@ def create_temp_clone(original: Repo, branches_to_checkout: List[str] = []) -> I
             new_head.set_tracking_branch(upstream_ref)
 
         original_default_branch.checkout()
+        assert new_clone is not None
+        assert new_clone.is_dirty() == False
+        assert len(new_clone.remotes) == 1
         yield new_clone
 
 
@@ -83,3 +90,7 @@ def reflog_to_str(log: RefLog) -> str:
 def create_git_history(repo: Repo, requested_commits: List[Tuple[List[Tuple[str, str]], str]]):
     assert repo.is_dirty() == False, "create_git_history may only be invoked on a 'clean' repo"
     create_files_with_content_in_repo(repo, requested_commits)
+
+
+def sorted_repo_branch_names(repo: Repo) -> List[str]:
+    return sorted(list(map(lambda h: h.name, repo.heads)))

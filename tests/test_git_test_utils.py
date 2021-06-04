@@ -1,4 +1,4 @@
-from git_guardrails_test_helpers.git_test_utils import create_temp_clone, reflog_to_str, temp_repo, create_git_history
+from git_guardrails_test_helpers.git_test_utils import temp_repo_clone, reflog_to_str, temp_repo, create_git_history
 from git_guardrails_test_helpers.git_test_utils import commit_all_modified_tracked_files
 
 
@@ -39,6 +39,6 @@ def test_create_temp_clone():
         ])
         assert upstream.is_dirty() == False
         upstream.heads['master'].checkout()
-        with create_temp_clone(upstream, ['feature-456']) as downstream:
+        with temp_repo_clone(upstream, ['feature-456']) as downstream:
             assert downstream.bare == False
             assert list(sorted(map(lambda h: h.name, downstream.heads))) == sorted(['master', 'feature-456'])
