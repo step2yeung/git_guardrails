@@ -1,7 +1,7 @@
 build: compile
 
 setup:
-	python3 -m pip install --upgrade pip && pip install pipenv && pipenv shell
+	python3 -m pip install --upgrade pip && pip install -r requirements_dev.txt
 
 compile: clean
 	pipenv install
