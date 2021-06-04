@@ -38,6 +38,7 @@ jobs:
       run: |
         echo "python version"
         echo $GG_PYTHON_VERSION
+        pipenv shell
         make
     - name: PEX Distributable
       run: |
