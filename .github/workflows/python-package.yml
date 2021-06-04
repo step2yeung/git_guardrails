@@ -38,8 +38,6 @@ jobs:
       run: |
         echo "python version"
         echo $GG_PYTHON_VERSION
-        python3 -m pip install --upgrade pip && pip install pipenv pex
-        pipenv shell
         make
     - name: PEX Distributable
       run: |
