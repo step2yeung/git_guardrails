@@ -14,7 +14,7 @@ def test_non_applicable_situation_exception():
         except NonApplicableSituationException as ex:
             cli.handle_non_applicable_situation_exception(ex)
             log_lines = "".join(get_lines())
-            assert strip_ansi(log_lines) == """[INFO]: git_guardrails has completed without taking any action.
+            assert strip_ansi(log_lines) == """git_guardrails has completed without taking any action.
 
 THERE'S NOTHING TO DO BECAUSE: EXAMPLE TITLE
 ----------------------------------------

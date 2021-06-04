@@ -1,12 +1,14 @@
+import click
 from functools import reduce
-from git.refs.head import Head  # type: ignore
+from git.refs.head import Head
+from git.remote import Remote  # type: ignore
 from yaspin import yaspin  # type: ignore
 
 from git.repo.base import Repo  # type: ignore
 from git_guardrails.cli.ux import CLIUX
 from git_guardrails.cli.value_format import format_branch_name, format_cli_command, format_commit
 from git_guardrails.cli.value_format import format_integer, format_remote_name
-from git_guardrails.errors import NonApplicableSituationException, UnhandledSituationException
+from git_guardrails.errors import NonApplicableSituationException, UnhandledSituationException, UserBypassException
 from git_guardrails.git_utils import git_default_branch, git_does_commit_exist_locally, git_ls_remote
 from git_guardrails.validate.options import ValidateOptions
 from git_guardrails.coroutine import as_async
@@ -127,7 +129,19 @@ review branches, and will not take any action when on a git repo's default branc
             if (has_latest_commits_from_upstream == False):
                 cli.warning(f"""New commits on {active_branch_tracked_ref
                             } were detected, which have not yet been pulled down to {active_branch.name}""")
-
+                user_response = click.confirm("Would you like to download these new commits?")
+                if user_response == False:
+                    cli.debug(f"When asked whether we can download new commits, user response was {user_response}")
+                    raise UserBypassException(f"""user decided not to download new commits from {
+                        active_branch_tracked_ref.name}""")
+                origin: Remote = repo.remotes['origin']
+                refspec = f"{active_branch.name}:{active_branch_tracked_ref.name}"
+                cli.info(f"Fetching new commits for branch {active_branch_tracked_ref.name}")
+                cli.debug(f"running 'git fetch' from remote '{origin.name}' with refspec '{refspec}'")
+                origin.fetch()
+                cli.info(f"Fetch from {origin.name} complete")
+    except UserBypassException as ex:
+        cli.handle_user_bypass_exception(ex)
     except NonApplicableSituationException as ex:
         cli.handle_non_applicable_situation_exception(ex)
     except UnhandledSituationException as ex:

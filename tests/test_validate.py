@@ -52,7 +52,8 @@ WHAT TO DO NEXT
 
 
 @patch('builtins.input', return_value="continue")
-async def test_new_upstream_commits_to_pull_down(mock_input):
+@patch('click.confirm', return_value="Y")
+async def test_new_upstream_commits_to_pull_down(mock_input_a, mock_input_b):
     """
     Test case for "origin/review-branch has new commits that I must pull down"
     (no new local commits that origin doesn't have yet)
@@ -79,6 +80,8 @@ async def test_new_upstream_commits_to_pull_down(mock_input):
                 await do_validate(cli=cli, opts=opts)
                 assert strip_ansi("".join(get_lines())) == """determined that local branch feature-123 tracks upstream branch feature-123 on remote origin
 [WARNING]: New commits on origin/feature-123 were detected, which have not yet been pulled down to feature-123
+Fetching new commits for branch origin/feature-123
+Fetch from origin complete
 """
 
 
@@ -91,7 +94,7 @@ async def test_do_validate_no_remote(mock_input):
         with fake_cliux() as (cli, get_lines):
             opts = ValidateOptions(ValidateCLIOptions(verbose=True, cwd=upstream.working_dir))
             await do_validate(cli=cli, opts=opts)
-            assert strip_ansi("".join(get_lines())) == """[INFO]: git_guardrails has completed without taking any action.
+            assert strip_ansi("".join(get_lines())) == """git_guardrails has completed without taking any action.
 
 THERE'S NOTHING TO DO BECAUSE: NO GIT REMOTES FOUND
 ----------------------------------------

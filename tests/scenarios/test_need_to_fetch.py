@@ -1,3 +1,6 @@
+from logging import DEBUG, INFO
+from unittest.mock import patch
+from git.refs.head import Head
 import pytest
 from contextlib import contextmanager
 from typing import Iterator, Tuple
@@ -52,7 +55,8 @@ def setup_need_to_fetch_scenario() -> Iterator[Tuple[Repo, Repo]]:
             yield (upstream, downstream)
 
 
-async def test_need_to_fetch_only_upstream_commits():
+@patch('click.confirm', return_value=True)
+async def test_need_to_fetch_only_upstream_commits(mock_input):
     with setup_need_to_fetch_scenario() as (upstream, downstream):
         assert upstream.is_dirty() == False
         downstream.heads['review-999'].checkout()
@@ -63,12 +67,41 @@ async def test_need_to_fetch_only_upstream_commits():
                 "".join(get_lines()))
 
 
-async def test_need_to_fetch_upstream_and_downstream_commits():
+@patch('click.confirm', return_value=False)
+async def test_need_to_fetch_only_upstream_commits_user_refuses(mock_input):
     with setup_need_to_fetch_scenario() as (upstream, downstream):
         assert upstream.is_dirty() == False
         downstream.heads['review-999'].checkout()
         with fake_cliux() as (cli, get_lines):
             opts = ValidateOptions(ValidateCLIOptions(verbose=True, cwd=downstream.working_dir))
             await do_validate(cli=cli, opts=opts)
-            assert "[WARNING]: New commits on origin/review-999 were detected" in strip_ansi(
-                "".join(get_lines()))
+            assert strip_ansi(
+                "".join(get_lines())) == """determined that local branch review-999 tracks upstream branch review-999 on remote origin
+[WARNING]: New commits on origin/review-999 were detected, which have not yet been pulled down to review-999
+git_guardrails has completed without taking any action.
+
+USER BYPASS
+----------------------------------------
+MORE INFORMATION
+The user decided to bypass git_guardrails by user decided not to download new commits from origin/review-999
+"""
+
+
+@patch('click.confirm', return_value=True)
+async def test_need_to_fetch_upstream_and_downstream_commits(mock_input):
+    with setup_need_to_fetch_scenario() as (upstream, downstream):
+        assert upstream.is_dirty() == False
+        review_branch: Head = downstream.heads['review-999']
+        review_branch.checkout()
+        tracked_branch: Head = review_branch.tracking_branch()
+        head_before_fetch = tracked_branch.commit
+        assert head_before_fetch.hexsha == tracked_branch.commit.hexsha
+        with fake_cliux(log_level=INFO) as (cli, get_lines):
+            opts = ValidateOptions(ValidateCLIOptions(verbose=False, cwd=downstream.working_dir))
+            await do_validate(cli=cli, opts=opts)
+            assert strip_ansi("".join(get_lines())) == """determined that local branch review-999 tracks upstream branch review-999 on remote origin
+[WARNING]: New commits on origin/review-999 were detected, which have not yet been pulled down to review-999
+Fetching new commits for branch origin/review-999
+Fetch from origin complete
+"""
+            assert head_before_fetch.hexsha != tracked_branch.commit.hexsha, 'New commits have been pulled down'
