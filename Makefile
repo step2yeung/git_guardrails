@@ -1,7 +1,7 @@
 build: compile
 
 setup:
-	python3 -m pip install --upgrade pip && pip install pipenv pex
+	python3 -m pip install --upgrade pip && pip install pipenv pex pytest
 
 compile: clean
 	pipenv install
