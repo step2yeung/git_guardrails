@@ -1,7 +1,7 @@
 build: compile
 
 setup:
-	python3 -m pip install --upgrade pip && pip install pipenv pytest pytest-cov pytest-watch pytest-asyncio pex
+	python3 -m pip install --upgrade pip && pip install pipenv && pipenv shell
 
 compile: clean
 	pipenv install
