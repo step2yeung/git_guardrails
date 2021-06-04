@@ -86,12 +86,20 @@ async def do_validate(cli: CLIUX, opts: ValidateOptions):
         default_branch = get_branch_information(repo, await get_default_git_branch(repo))  # default branch
         cli.debug(f"default branch: {default_branch.name} @ {default_branch.commit.hexsha}")
 
+        if active_branch == default_branch:
+            raise NonApplicableSituationException(
+                f"You are on the default branch ({default_branch.name})",
+                """git_guardrails is intended to catch potential problems when pushing
+review branches, and will not take any action when on a git repo's default branch""")
+
+        cli.debug('validating merge base between review branch and default branch')
         validate_merge_bases_with_default_branch(
             cli=cli,
             repo=repo,
             active_branch_name=active_branch,
             default_branch_name=default_branch
         )
+        cli.debug('merge base validation complete')
 
         active_branch_tracked_ref = active_branch.tracking_branch()
         if (active_branch_tracked_ref is None):

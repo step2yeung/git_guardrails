@@ -13,7 +13,7 @@ def fake_cliux(
     supports_tty: bool = False,
     log_level: int = DEBUG
 ) -> Iterator[Tuple[CLIUX, Callable[[], List[str]]]]:
-    with fake_logger() as (my_logger, get_lines):
+    with fake_logger(log_level) as (my_logger, get_lines):
         cli = CLIUX(
             supports_color=supports_color,
             supports_tty=supports_tty,

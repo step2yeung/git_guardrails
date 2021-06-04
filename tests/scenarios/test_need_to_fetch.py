@@ -8,7 +8,7 @@ from git_guardrails.validate.cli_options import ValidateCLIOptions
 from git_guardrails.validate.options import ValidateOptions
 from git_guardrails_test_helpers.cliux_test_utils import fake_cliux
 from git_guardrails_test_helpers.git_test_utils import temp_repo, create_git_history  # type: ignore
-from git_guardrails_test_helpers.git_test_utils import commit_all_modified_tracked_files, create_temp_clone   # type: ignore
+from git_guardrails_test_helpers.git_test_utils import commit_all_modified_tracked_files, temp_repo_clone   # type: ignore
 
 
 # All test coroutines will be treated as marked.
@@ -34,7 +34,7 @@ def setup_need_to_fetch_scenario() -> Iterator[Tuple[Repo, Repo]]:
         # Switch back to origin/master
         upstream_default_branch.checkout()
         # Create a "downstream" clone of the repo. This would be the user's working copy
-        with create_temp_clone(upstream, ['review-999']) as downstream:
+        with temp_repo_clone(upstream, ['review-999']) as downstream:
             # Make sure the downstream clone is initially on the default branch
             assert downstream.active_branch.name in ['main', 'master']
             # Make sure the downstream clone has a local copy of the review branch

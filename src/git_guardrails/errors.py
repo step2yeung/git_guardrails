@@ -25,11 +25,28 @@ class ExceptionWithNextBestActions(Exception):
         return "\n".join([formatted_title, divider, more_info_title, self.reason, next_actions_title, next_actions_bullets])
 
 
+class GitRemoteConnectivityException(ExceptionWithNextBestActions):
+    """
+    Raised when connectivity to a git remote cannot be established
+
+    For example
+    - The user's git remote is on some VPN, and the user is not connected
+    - The user has no internet connection at all
+    """
+
+    def __init__(self, remote_name: str, remote_url: str):
+        super().__init__(
+            f"Could not reach remote {remote_name}",
+            f"A connection to git remote {remote_name} could not be established.",
+            ["Verify any VPN connections that may be necessary to reach your git repo",
+             f"Please check your network connection to {remote_url}"])
+
+
 class NonApplicableSituationException(ExceptionWithNextBestActions):
     """
-    Raised in situations where the current usage is found to *not apply*.
+    Raised in situations where the current usage is found to * not apply * .
 
-    For example, validation logic in a pre-push git hook is not meaningful
+    For example, validation logic in a pre - push git hook is not meaningful
     - if we find that there are no remotes to push to
     - if we find that the user is currently on their default branch
     - if we find that there are no new commits to push
@@ -46,9 +63,9 @@ class UnhandledSituationException(ExceptionWithNextBestActions):
     state being something other than what we expected it to be. The user is offered
     a warning, and an opportunity to either abort or proceed
 
-    For example, validation logic in a pre-push git hook cannot proceed if
+    For example, validation logic in a pre - push git hook cannot proceed if
     - we find zero commits in the repository
-    - we find the user on a branch that somehow has no merge-base with the default branch
+    - we find the user on a branch that somehow has no merge - base with the default branch
     - the user tries to push while in a detached head state
     """
 

@@ -1,16 +1,26 @@
+from git.remote import Remote  # type: ignore
 from git.refs.remote import RemoteReference  # type: ignore
 from git.repo import Repo  # type: ignore
 import subprocess
 from typing import List
 
+from git_guardrails.errors import GitRemoteConnectivityException
+
 
 def git_default_branch(repo: Repo):
+    origin: Remote = repo.remotes['origin']
+    assert origin is not None
     process = subprocess.Popen(['git', 'remote', "show", "origin"],
                                cwd=repo.working_dir,
                                stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE)
-    (stdout, _) = process.communicate()
-    [relevant_line] = filter(lambda s: "HEAD branch" in s, str(stdout).split('\\n'))
+    (stdout, stderr) = process.communicate()
+    stderr_str = str(stderr)
+    stdout_str = str(stdout)
+    if (len(stderr) > 0):
+        if "not found" in stderr_str:
+            raise GitRemoteConnectivityException(remote_name=origin.name, remote_url=", ".join(origin.urls))
+    [relevant_line] = filter(lambda s: "HEAD branch" in s, stdout_str.split('\\n'))
     [_, branch_name] = relevant_line.split(": ")
     return branch_name
 
