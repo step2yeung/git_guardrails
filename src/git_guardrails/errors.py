@@ -1,5 +1,3 @@
-from os import get_terminal_size
-from textwrap import wrap
 from typing import List
 from colorama import Style
 
