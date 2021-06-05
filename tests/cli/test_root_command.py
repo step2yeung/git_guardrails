@@ -31,14 +31,18 @@ def test_validate_help():
   Examine the current Git workspace and perform some sanity-checking
 
 Options:
-  -v, --verbose / --no-verbose
-  --cwd TEXT
-  --current-branch TEXT
-  --color / --no-color
-  --tty / --no-tty
-  --auto-fetch / --no-auto-fetch
+  -v, --verbose / --no-verbose    extra logging
+  --cwd TEXT                      directory to examine (the git repo)
+  --current-branch TEXT           name of branch to treat as 'the PR'
+  --color / --no-color            terminal color support
+  --tty / --no-tty                terminal TTY support
+  --auto-fetch / --no-auto-fetch  automatically fetch new upstream commits
   --commit-count-soft-fail-threshold INTEGER
+                                  # of new local branch commits before the user
+                                  is warned  [default: 80]
   --commit-count-hard-fail-threshold INTEGER
+                                  # of new local branch commits before the user
+                                  is stopped  [default: 40]
   -h, --help                      Show this message and exit.
 """
 

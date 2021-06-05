@@ -22,15 +22,23 @@ async def main():
 
 
 @main.command(context_settings=CONTEXT_SETTINGS)
-@click.option('-v', '--verbose/--no-verbose', type=bool, default=False)
-@click.option('--cwd', type=str)
+@click.option('-v', '--verbose/--no-verbose', type=bool, default=False, help="extra logging")
+@click.option('--cwd', type=str, help="directory to examine (the git repo)")
 @click.option('--enabled/--no-enabled', type=bool, default=True, hidden=True)
-@click.option('--current-branch', type=str)
-@click.option('--color/--no-color', type=bool, default=True)
-@click.option('--tty/--no-tty', type=bool)
-@click.option('--auto-fetch/--no-auto-fetch', type=bool, default=False)
-@click.option('--commit-count-soft-fail-threshold', type=int, default=DEFAULT_COMMIT_COUNT_HARD_FAIL_THRESHOLD)
-@click.option('--commit-count-hard-fail-threshold', type=int, default=DEFAULT_COMMIT_COUNT_SOFT_FAIL_THRESHOLD)
+@click.option('--current-branch', type=str, help="name of branch to treat as 'the PR'")
+@click.option('--color/--no-color', type=bool, default=True, help='terminal color support')
+@click.option('--tty/--no-tty', type=bool, help='terminal TTY support')
+@click.option('--auto-fetch/--no-auto-fetch', type=bool, default=False, help='automatically fetch new upstream commits')
+@click.option('--commit-count-soft-fail-threshold',
+              type=int,
+              default=DEFAULT_COMMIT_COUNT_HARD_FAIL_THRESHOLD,
+              show_default=True,
+              help="# of new local branch commits before the user is warned")
+@click.option('--commit-count-hard-fail-threshold',
+              type=int,
+              default=DEFAULT_COMMIT_COUNT_SOFT_FAIL_THRESHOLD,
+              show_default=True,
+              help="# of new local branch commits before the user is stopped")
 @click.option('--commit-count-auto-bypass-soft-fail', type=bool, default=False, hidden=True)
 @coroutine
 async def validate(verbose: bool,
