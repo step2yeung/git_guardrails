@@ -1,5 +1,6 @@
 from functools import reduce
 from typing import List
+from git.exc import InvalidGitRepositoryError  # type: ignore
 from git.objects.commit import Commit  # type: ignore
 from git.refs.head import Head  # type: ignore
 from git.refs.remote import RemoteReference  # type: ignore
@@ -10,7 +11,8 @@ from git.repo.base import Repo  # type: ignore
 from git_guardrails.cli.ux import CLIUX
 from git_guardrails.cli.value_format import format_branch_name, format_cli_command, format_commit
 from git_guardrails.cli.value_format import format_integer, format_remote_name
-from git_guardrails.errors import NonApplicableSituationException, UnhandledSituationException, UserBypassException
+from git_guardrails.errors import UserBypassException, UserBypassableWarning
+from git_guardrails.errors import LikelyUserErrorException, NonApplicableSituationException, UnhandledSituationException
 from git_guardrails.git_utils import git_default_branch, git_does_commit_exist_locally, git_ls_remote
 from git_guardrails.validate.options import ValidateOptions
 from git_guardrails.coroutine import as_async
@@ -123,7 +125,7 @@ review branches, and will not take any action when on a git repo's default branc
         default_branch_name=default_branch
     )
     cli.debug('merge base validation complete')
-    return (active_branch)
+    return (active_branch, default_branch)
 
 
 def analyze_review_branch_tracking_situation(cli: CLIUX, repo: Repo, active_branch: Head):
@@ -189,7 +191,7 @@ async def do_validate(cli: CLIUX, opts: ValidateOptions):
         repo = Repo(cwd)  # git repo
 
         validate_remotes(repo=repo)
-        (active_branch) = await validate_branches_and_merge_bases(cli=cli, repo=repo, opts=opts)
+        (active_branch, default_branch) = await validate_branches_and_merge_bases(cli=cli, repo=repo, opts=opts)
         (latest_remote_sha, active_branch_tracked_ref) = analyze_review_branch_tracking_situation(cli, repo, active_branch)
         has_latest_commits_from_upstream = git_does_commit_exist_locally(repo=repo, sha=latest_remote_sha)
 
@@ -206,9 +208,40 @@ async def do_validate(cli: CLIUX, opts: ValidateOptions):
         new_upstream_commits = get_truncated_log(repo, active_branch_tracked_ref.commit, merge_base.hexsha)
         cli.debug(f"new local commits: {new_local_commits}")
         cli.debug(f"new upstream commits: {new_upstream_commits}")
+
+        if (len(new_local_commits) > opts.get_commit_count_hard_fail_threshold()):
+            raise LikelyUserErrorException(
+                "Very large number of review branch commits",
+                f"""An very large {len(new_local_commits)} number of commits were detected on review branch {
+                    active_branch.name
+                    }, which were not found on tracked branch {active_branch_tracked_ref.name
+                    }. This may be an indication of an improper rebase!
+
+This warning is presented whenever more than {opts.get_commit_count_hard_fail_threshold()
+} new commits, that have not yet been pushed, are found on a review branch.
+
+Please take a close look at your review branch, and ensure you don't see any duplicate commits that are already on {
+default_branch.name}""")
+        elif (len(new_local_commits) > opts.get_commit_count_soft_fail_threshold()):
+            raise UserBypassableWarning(
+                "Large number of review branch commits",
+                f"""An unusually large {len(new_local_commits)} number of commits were detected on review branch {
+                    active_branch.name
+                    }, which were not found on tracked branch {active_branch_tracked_ref.name
+                    }. This may be an indication of an improper rebase!
+
+This warning is presented whenever more than {opts.get_commit_count_soft_fail_threshold()
+} new commits, that have not yet been pushed, are found on a review branch.
+
+Please take a close look at your review branch, and ensure you don't see any duplicate commits that are already on {
+default_branch.name}""")
+
     except UserBypassException as ex:
         cli.handle_user_bypass_exception(ex)
     except NonApplicableSituationException as ex:
         cli.handle_non_applicable_situation_exception(ex)
     except UnhandledSituationException as ex:
         cli.handle_unhandled_situation_exception(ex)
+    except InvalidGitRepositoryError:
+        cli.error(f"""git_guardrails is only intended for use within a git repository directory
+{cwd} does not seem to be a git repository""")

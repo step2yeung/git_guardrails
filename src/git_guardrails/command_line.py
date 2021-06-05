@@ -2,6 +2,8 @@ import click
 from git_guardrails.cli.ux import CLIUX, generate_welcome_banner
 from git_guardrails.coroutine import coroutine
 from git_guardrails.validate import do_validate
+from git_guardrails.validate.cli_options import DEFAULT_COMMIT_COUNT_HARD_FAIL_THRESHOLD
+from git_guardrails.validate.cli_options import DEFAULT_COMMIT_COUNT_SOFT_FAIL_THRESHOLD
 from git_guardrails.validate.cli_options import ValidateCLIOptions
 from git_guardrails.validate.options import ValidateOptions
 from logging import DEBUG, INFO
@@ -26,7 +28,8 @@ async def main():
 @click.option('--color/--no-color', type=bool, default=True)
 @click.option('--tty/--no-tty', type=bool)
 @click.option('--auto-fetch/--no-auto-fetch', type=bool, default=False)
-@click.option('--auto-rebase/--no-auto-rebase', type=bool, default=False)
+@click.option('--commit-count-soft-fail-threshold', type=int, default=DEFAULT_COMMIT_COUNT_HARD_FAIL_THRESHOLD)
+@click.option('--commit-count-hard-fail-threshold', type=int, default=DEFAULT_COMMIT_COUNT_SOFT_FAIL_THRESHOLD)
 @coroutine
 async def validate(verbose: bool,
                    cwd: str,
@@ -34,7 +37,8 @@ async def validate(verbose: bool,
                    color: bool,
                    tty: bool,
                    auto_fetch: bool,
-                   auto_rebase: bool):
+                   commit_count_soft_fail_threshold: bool,
+                   commit_count_hard_fail_threshold: bool):
     """Examine the current Git workspace and perform some sanity-checking"""
     cliOptions = ValidateCLIOptions(
         verbose=verbose,
@@ -43,7 +47,8 @@ async def validate(verbose: bool,
         color=color,
         tty=tty,
         auto_fetch=auto_fetch,
-        auto_rebase=auto_rebase
+        commit_count_soft_fail_threshold=commit_count_soft_fail_threshold,
+        commit_count_hard_fail_threshold=commit_count_hard_fail_threshold
     )
     opts = ValidateOptions(cliOptions)
     log_level = DEBUG if opts.is_verbose() else INFO

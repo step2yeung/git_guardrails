@@ -28,6 +28,34 @@ class ExceptionWithNextBestActions(Exception):
         return "\n".join(message_elements)
 
 
+class UserBypassableWarning(ExceptionWithNextBestActions):
+    """
+    An exception, associated with a potentially dangerous situation, that gives the user
+    a choice about whether the program exits successfully or not
+    """
+
+    def __init__(self, warning_title: str, warning_details: str):
+        super().__init__(
+            f"Warning: {warning_title}",
+            warning_details,
+            ["You may choose to continue", "You may choose to abort by pressing Ctrl + C"])
+
+
+class LikelyUserErrorException(ExceptionWithNextBestActions):
+    """
+    An exception, associated with a situation that's highly likely to be dangerous.
+    The user has no chance to bypass this, and the program will exit non-successfully
+    """
+
+    def __init__(self, warning_title: str, warning_details: str):
+        super().__init__(
+            f"Danger: {warning_title}",
+            warning_details,
+            ["It's quite possible that you've made a mistake in your review branch, that you need to address",
+             f"""If you're doing something exotic deliberately, you can suppress this failure by trying {
+                 ""}this command again, while skipping all git hooks"""])
+
+
 class UserBypassException(ExceptionWithNextBestActions):
     """
     Raised when the user instructs git_guardrails to "get out of the way"
