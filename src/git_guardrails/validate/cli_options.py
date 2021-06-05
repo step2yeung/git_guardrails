@@ -6,6 +6,7 @@ class ValidateCLIOptions:
     def __init__(self,
                  commit_count_soft_fail_threshold: int = DEFAULT_COMMIT_COUNT_SOFT_FAIL_THRESHOLD,
                  commit_count_hard_fail_threshold: int = DEFAULT_COMMIT_COUNT_HARD_FAIL_THRESHOLD,
+                 commit_count_auto_bypass_soft_fail: bool = False,
                  verbose: bool = False,
                  cwd: str = None,
                  current_branch: str = None,
@@ -20,6 +21,7 @@ class ValidateCLIOptions:
         self.auto_fetch = auto_fetch
         self.commit_count_soft_fail_threshold = commit_count_soft_fail_threshold
         self.commit_count_hard_fail_threshold = commit_count_hard_fail_threshold
+        self.commit_count_auto_bypass_soft_fail = commit_count_auto_bypass_soft_fail
 
     def __str__(self):
         return "".join([

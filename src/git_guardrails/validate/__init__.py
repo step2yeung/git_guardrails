@@ -9,7 +9,7 @@ from yaspin import yaspin  # type: ignore
 
 from git.repo.base import Repo  # type: ignore
 from git_guardrails.cli.ux import CLIUX
-from git_guardrails.cli.value_format import format_branch_name, format_cli_command, format_commit
+from git_guardrails.cli.value_format import format_branch_name, format_cli_command, format_commit, format_highlight
 from git_guardrails.cli.value_format import format_integer, format_remote_name
 from git_guardrails.errors import UserBypassException, UserBypassableWarning
 from git_guardrails.errors import LikelyUserErrorException, NonApplicableSituationException, UnhandledSituationException
@@ -215,20 +215,24 @@ async def do_validate(cli: CLIUX, opts: ValidateOptions):
                 f"""An very large {len(new_local_commits)} number of commits were detected on review branch {
                     active_branch.name
                     }, which were not found on tracked branch {active_branch_tracked_ref.name
-                    }. This may be an indication of an improper rebase!
+                    }.
 
-This warning is presented whenever more than {opts.get_commit_count_hard_fail_threshold()
-} new commits, that have not yet been pushed, are found on a review branch.
+{format_highlight("This may be an indication of an improper rebase!")}
+
+This warning is presented whenever more than {format_integer(opts.get_commit_count_hard_fail_threshold())
+} new commits that have not yet been pushed are found on a review branch.
 
 Please take a close look at your review branch, and ensure you don't see any duplicate commits that are already on {
 default_branch.name}""")
         elif (len(new_local_commits) > opts.get_commit_count_soft_fail_threshold()):
             raise UserBypassableWarning(
                 "Large number of review branch commits",
-                f"""An unusually large {len(new_local_commits)} number of commits were detected on review branch {
+                f"""An unusually large {format_integer(len(new_local_commits))} number of commits were detected on review branch {
                     active_branch.name
                     }, which were not found on tracked branch {active_branch_tracked_ref.name
-                    }. This may be an indication of an improper rebase!
+                    }.
+
+{format_highlight("This may be an indication of an improper rebase!")}
 
 This warning is presented whenever more than {opts.get_commit_count_soft_fail_threshold()
 } new commits, that have not yet been pushed, are found on a review branch.
@@ -238,6 +242,9 @@ default_branch.name}""")
 
     except UserBypassException as ex:
         cli.handle_user_bypass_exception(ex)
+    except UserBypassableWarning as ex:
+        cli.handle_user_bypassable_warning(ex, bypass_response=(
+            "continue" if opts.should_auto_bypass_commit_count_soft_fail() else None))
     except NonApplicableSituationException as ex:
         cli.handle_non_applicable_situation_exception(ex)
     except UnhandledSituationException as ex:

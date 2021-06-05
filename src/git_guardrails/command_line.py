@@ -30,6 +30,7 @@ async def main():
 @click.option('--auto-fetch/--no-auto-fetch', type=bool, default=False)
 @click.option('--commit-count-soft-fail-threshold', type=int, default=DEFAULT_COMMIT_COUNT_HARD_FAIL_THRESHOLD)
 @click.option('--commit-count-hard-fail-threshold', type=int, default=DEFAULT_COMMIT_COUNT_SOFT_FAIL_THRESHOLD)
+@click.option('--commit-count-auto-bypass-soft-fail', type=bool, default=False, hidden=True)
 @coroutine
 async def validate(verbose: bool,
                    cwd: str,
@@ -38,7 +39,8 @@ async def validate(verbose: bool,
                    tty: bool,
                    auto_fetch: bool,
                    commit_count_soft_fail_threshold: bool,
-                   commit_count_hard_fail_threshold: bool):
+                   commit_count_hard_fail_threshold: bool,
+                   commit_count_auto_bypass_soft_fail: bool):
     """Examine the current Git workspace and perform some sanity-checking"""
     cliOptions = ValidateCLIOptions(
         verbose=verbose,
@@ -48,7 +50,8 @@ async def validate(verbose: bool,
         tty=tty,
         auto_fetch=auto_fetch,
         commit_count_soft_fail_threshold=commit_count_soft_fail_threshold,
-        commit_count_hard_fail_threshold=commit_count_hard_fail_threshold
+        commit_count_hard_fail_threshold=commit_count_hard_fail_threshold,
+        commit_count_auto_bypass_soft_fail=commit_count_auto_bypass_soft_fail
     )
     opts = ValidateOptions(cliOptions)
     log_level = DEBUG if opts.is_verbose() else INFO

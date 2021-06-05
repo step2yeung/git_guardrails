@@ -55,6 +55,9 @@ class ValidateOptions:
     def get_commit_count_hard_fail_threshold(self) -> int:
         return self.cliOpts.commit_count_hard_fail_threshold
 
+    def should_auto_bypass_commit_count_soft_fail(self) -> bool:
+        return self.cliOpts.commit_count_auto_bypass_soft_fail
+
     def is_terminal_color_supported(self, color_support_checker: Callable[[], bool] = supports_color) -> bool:
         if (self.cliOpts.color is not None):
             return self.cliOpts.color

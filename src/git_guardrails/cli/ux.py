@@ -1,4 +1,5 @@
 from logging import Logger
+from typing import Union
 from colorama import init as initColorama, Style, Fore
 from git_guardrails.cli.logging import create_cli_logger
 from git_guardrails.errors import NonApplicableSituationException, UnhandledSituationException, UserBypassException
@@ -50,12 +51,15 @@ class CLIUX:
 
 {str(ex)}""")
 
-    def handle_user_bypassable_warning(self, ex: UserBypassableWarning, retry_prompt: bool = True):
+    def handle_user_bypassable_warning(self,
+                                       ex: UserBypassableWarning,
+                                       bypass_response: Union[str, None] = None,
+                                       retry_prompt: bool = True):
         while(True):
             user_response = ''
             self.warning(f"""{str(ex)}""")
 
-            user_response = input(f"""
+            user_response = bypass_response or input(f"""
 {Fore.CYAN}Please type CONTINUE to proceed, or hit Ctrl+C to abort{Fore.RESET}
 {Style.BRIGHT}>{Style.RESET_ALL} """)
             if (user_response.lower() == "continue"):

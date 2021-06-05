@@ -1,3 +1,5 @@
+from os import get_terminal_size
+from textwrap import wrap
 from typing import List
 from colorama import Style
 
@@ -19,7 +21,8 @@ class ExceptionWithNextBestActions(Exception):
         formatted_title = f"{Style.BRIGHT}{self.what_happened.upper()}{Style.RESET_ALL}"
         divider = "----------------------------------------"
         more_info_title = f"{Style.DIM}MORE INFORMATION{Style.RESET_ALL}"
-        message_elements = [formatted_title, divider, more_info_title, self.reason]
+        formatted_reason = self.reason
+        message_elements = [formatted_title, divider, more_info_title, formatted_reason]
         if (len(self.next_best_actions) > 0):
             next_actions_title = f"\n{Style.DIM}WHAT TO DO NEXT{Style.RESET_ALL}"
             next_actions_bullets = "\n".join(map(lambda s: f"- {s}", self.next_best_actions))
