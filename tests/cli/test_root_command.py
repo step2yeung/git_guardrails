@@ -39,5 +39,13 @@ Options:
   --auto-fetch / --no-auto-fetch
   --commit-count-soft-fail-threshold INTEGER
   --commit-count-hard-fail-threshold INTEGER
-  --help                          Show this message and exit.
+  -h, --help                      Show this message and exit.
+"""
+
+
+def test_validate_not_enabled():
+    runner = CliRunner()
+    result = runner.invoke(validate, ['--no-enabled'])
+    assert result.exit_code == 0
+    assert result.output == """skipping validation, due to '--no-enabled' CLI arg, or GIT_GUARDRAILS_ENABLED=False env variable
 """
