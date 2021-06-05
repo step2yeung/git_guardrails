@@ -48,6 +48,7 @@ jobs:
 
   python_compat:
     needs: build
+    enabled: false
     runs-on: ubuntu-latest
     env:
       GG_PYTHON_VERSION: ${{ matrix.python-version }}
