@@ -61,7 +61,7 @@ async def test_need_to_fetch_only_upstream_commits(mock_input):
         assert upstream.is_dirty() == False
         downstream.heads['review-999'].checkout()
         with fake_cliux() as (cli, get_lines):
-            opts = ValidateOptions(ValidateCLIOptions(verbose=True, cwd=downstream.working_dir))
+            opts = ValidateOptions(ValidateCLIOptions(verbose=True, auto_fetch=True, cwd=downstream.working_dir))
             await do_validate(cli=cli, opts=opts)
             assert "[WARNING]: New commits on origin/review-999 were detected" in strip_ansi(
                 "".join(get_lines()))
@@ -73,7 +73,7 @@ async def test_need_to_fetch_only_upstream_commits_user_refuses(mock_input):
         assert upstream.is_dirty() == False
         downstream.heads['review-999'].checkout()
         with fake_cliux() as (cli, get_lines):
-            opts = ValidateOptions(ValidateCLIOptions(verbose=True, cwd=downstream.working_dir))
+            opts = ValidateOptions(ValidateCLIOptions(verbose=True, auto_fetch=False, cwd=downstream.working_dir))
             await do_validate(cli=cli, opts=opts)
             assert strip_ansi(
                 "".join(get_lines())) == """determined that local branch review-999 tracks upstream branch review-999 on remote origin
@@ -97,7 +97,7 @@ async def test_need_to_fetch_upstream_and_downstream_commits(mock_input):
         head_before_fetch = tracked_branch.commit
         assert head_before_fetch.hexsha == tracked_branch.commit.hexsha
         with fake_cliux(log_level=INFO) as (cli, get_lines):
-            opts = ValidateOptions(ValidateCLIOptions(verbose=False, cwd=downstream.working_dir))
+            opts = ValidateOptions(ValidateCLIOptions(verbose=False, auto_fetch=True, cwd=downstream.working_dir))
             await do_validate(cli=cli, opts=opts)
             assert strip_ansi("".join(get_lines())) == """determined that local branch review-999 tracks upstream branch review-999 on remote origin
 [WARNING]: New commits on origin/review-999 were detected, which have not yet been pulled down to review-999

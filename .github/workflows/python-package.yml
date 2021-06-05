@@ -12,28 +12,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      GG_PYTHON_VERSION: "3.9"
     steps:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-3.9-pip-${{ hashFiles('**/requirements.txt', 'Pipfile.lock') }}
+        key: ${{ runner.os }}-3.7-pip-${{ hashFiles('**/requirements.txt', 'Pipfile.lock') }}
         restore-keys: |
-          ${{ runner.os }}-3.9-pip-
+          ${{ runner.os }}-3.7-pip-
 
     - uses: actions/cache@v2
       if: startsWith(runner.os, 'macOS')
       with:
         path: ~/Library/Caches/pip
-        key: ${{ runner.os }}-3.9-pip-${{ hashFiles('**/requirements.txt', 'Pipfile.lock') }}
+        key: ${{ runner.os }}-3.7-pip-${{ hashFiles('**/requirements.txt', 'Pipfile.lock') }}
         restore-keys: |
-          ${{ runner.os }}-3.9-pip-
-    - name: Set up Python 3.9
+          ${{ runner.os }}-3.7-pip-
+    - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: 3.7
     - name: Install dependencies & build
       run: |
         echo "python version"
@@ -92,13 +90,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.9]
         os: 
           - macos-latest
           - windows-latest
         include:
-        - os: ubuntu-latest
-          path: ~/.cache/pip
+        # - os: ubuntu-latest
+        #   path: ~/.cache/pip
         - os: macos-latest
           path: ~/Library/Caches/pip
         - os: windows-latest
@@ -108,13 +105,13 @@ jobs:
     - uses: actions/cache@v2
       with:
         path: ${{ matrix.path }}
-        key: ${{ runner.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('**/requirements.txt', 'Pipfile.lock') }}
+        key: ${{ runner.os }}-3.7-pip-${{ hashFiles('**/requirements.txt', 'Pipfile.lock') }}
         restore-keys: |
-          ${{ runner.os }}-${{ matrix.python-version }}-pip-
-    - name: Set up Python ${{ matrix.python-version }}
+          ${{ runner.os }}-3.7-pip-
+    - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.7
     - name: Install dependencies & build
       run: |
         make

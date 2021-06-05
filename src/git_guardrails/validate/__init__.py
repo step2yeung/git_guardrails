@@ -79,9 +79,12 @@ def get_branch_information(repo: Repo, branch_name: str) -> Head:
 def determine_whether_to_auto_fetch(cli: CLIUX, opts: ValidateOptions, active_branch_tracked_ref: RemoteReference):
     user_response = ""
     if opts.is_auto_fetch_enabled() == True:
+        cli.debug('User provided --auto-fetch CLI argument. Proceeding as instructed')
         user_response = 'y'
     elif opts.is_auto_fetch_enabled() == False:
-        user_response = 'n'
+        cli.debug('User provided --no-auto-fetch CLI argument. Halting as instructed')
+        raise UserBypassException(f"""user decided not to download new commits from {
+                active_branch_tracked_ref.name}""")
 
     while user_response not in ['y', 'Y']:
         user_response = input("Would you like to download these new commits? [y/n]")
