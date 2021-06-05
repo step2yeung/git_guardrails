@@ -1,7 +1,7 @@
 from logging import Logger
 from colorama import init as initColorama, Style, Fore
 from git_guardrails.cli.logging import create_cli_logger
-from git_guardrails.errors import NonApplicableSituationException, UnhandledSituationException
+from git_guardrails.errors import NonApplicableSituationException, UnhandledSituationException, UserBypassException
 
 initColorama()
 
@@ -40,6 +40,11 @@ class CLIUX:
         self.logger.error(msg, *args, **kwargs)
 
     def handle_non_applicable_situation_exception(self, ex: NonApplicableSituationException):
+        self.info(f"""git_guardrails has completed without taking any action.
+
+{str(ex)}""")
+
+    def handle_user_bypass_exception(self, ex: UserBypassException):
         self.info(f"""git_guardrails has completed without taking any action.
 
 {str(ex)}""")

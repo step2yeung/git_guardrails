@@ -1,7 +1,7 @@
 import pytest
 from click.testing import CliRunner
 from git_guardrails.command_line import main, validate
-import git_guardrails.__main__ # noqa
+import git_guardrails.__main__  # noqa
 
 
 # All test coroutines will be treated as marked.
@@ -36,5 +36,7 @@ Options:
   --current-branch TEXT
   --color / --no-color
   --tty / --no-tty
-  --help                        Show this message and exit.
+  --auto-fetch / --no-auto-fetch
+  --auto-rebase / --no-auto-rebase
+  --help                          Show this message and exit.
 """

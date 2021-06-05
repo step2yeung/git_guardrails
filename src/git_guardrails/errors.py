@@ -10,7 +10,7 @@ class ExceptionWithNextBestActions(Exception):
     - What are the "next best actions" the user can take?
     """
 
-    def __init__(self, what_happened: str, reason: str, next_best_actions: List[str]):
+    def __init__(self, what_happened: str, reason: str, next_best_actions: List[str] = []):
         self.what_happened = what_happened
         self.reason = reason
         self.next_best_actions = next_best_actions
@@ -19,10 +19,29 @@ class ExceptionWithNextBestActions(Exception):
         formatted_title = f"{Style.BRIGHT}{self.what_happened.upper()}{Style.RESET_ALL}"
         divider = "----------------------------------------"
         more_info_title = f"{Style.DIM}MORE INFORMATION{Style.RESET_ALL}"
-        next_actions_title = f"""
-{Style.DIM}WHAT TO DO NEXT{Style.RESET_ALL}"""
-        next_actions_bullets = "\n".join(map(lambda s: f"- {s}", self.next_best_actions))
-        return "\n".join([formatted_title, divider, more_info_title, self.reason, next_actions_title, next_actions_bullets])
+        message_elements = [formatted_title, divider, more_info_title, self.reason]
+        if (len(self.next_best_actions) > 0):
+            next_actions_title = f"\n{Style.DIM}WHAT TO DO NEXT{Style.RESET_ALL}"
+            next_actions_bullets = "\n".join(map(lambda s: f"- {s}", self.next_best_actions))
+            message_elements.append(next_actions_title)
+            message_elements.append(next_actions_bullets)
+        return "\n".join(message_elements)
+
+
+class UserBypassException(ExceptionWithNextBestActions):
+    """
+    Raised when the user instructs git_guardrails to "get out of the way"
+    and allow them to proceed without protection
+
+    For example
+    - The user decides not to download new commits from origin
+    """
+
+    def __init__(self, bypass_description: str):
+        super().__init__(
+            "User bypass",
+            f"The user decided to bypass git_guardrails ({bypass_description})",
+            [])
 
 
 class GitRemoteConnectivityException(ExceptionWithNextBestActions):

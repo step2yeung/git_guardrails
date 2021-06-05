@@ -23,3 +23,7 @@ sphinx = "*"
 sphinx-rtd-theme = "*"
 typed-ast = "*"
 typing-extensions = "*"
+types-colorama = "*"
+
+[requires]
+python_version = "3.9"

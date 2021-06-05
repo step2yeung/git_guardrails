@@ -1,5 +1,5 @@
 from os import getcwd
-from typing import Callable
+from typing import Callable, Union
 from git import Repo  # type: ignore
 from git_guardrails.cli.color import supports_color
 from git_guardrails.cli.tty import is_tty_supported
@@ -42,6 +42,18 @@ class ValidateOptions:
             return self.cliOpts.cwd
         else:
             return getcwd()
+
+    def is_auto_fetch_enabled(self) -> Union[bool, None]:
+        if (self.cliOpts.auto_fetch is not None):
+            return self.cliOpts.auto_fetch
+        else:
+            return None
+
+    def is_auto_rebase_enabled(self) -> Union[bool, None]:
+        if (self.cliOpts.auto_rebase is not None):
+            return self.cliOpts.auto_rebase
+        else:
+            return None
 
     def is_terminal_color_supported(self, color_support_checker: Callable[[], bool] = supports_color) -> bool:
         if (self.cliOpts.color is not None):

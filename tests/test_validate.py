@@ -52,7 +52,7 @@ WHAT TO DO NEXT
 
 
 @patch('builtins.input', return_value="continue")
-async def test_new_upstream_commits_to_pull_down(mock_input):
+async def test_new_upstream_commits_to_pull_down(mock_input_a):
     """
     Test case for "origin/review-branch has new commits that I must pull down"
     (no new local commits that origin doesn't have yet)
@@ -72,13 +72,15 @@ async def test_new_upstream_commits_to_pull_down(mock_input):
             upstream_default_branch.checkout()
             assert upstream.active_branch.name in ['main', 'master']
             downstream.heads['feature-123'].checkout()
-            opts = ValidateOptions(ValidateCLIOptions(verbose=False, cwd=downstream.working_dir))
+            opts = ValidateOptions(ValidateCLIOptions(verbose=False, cwd=downstream.working_dir, auto_fetch=True))
             assert opts.is_verbose() == False
             with fake_cliux(log_level=INFO) as (cli, get_lines):
                 assert cli.log_level == INFO
                 await do_validate(cli=cli, opts=opts)
                 assert strip_ansi("".join(get_lines())) == """determined that local branch feature-123 tracks upstream branch feature-123 on remote origin
 [WARNING]: New commits on origin/feature-123 were detected, which have not yet been pulled down to feature-123
+Fetching new commits for branch origin/feature-123
+Fetch from origin complete
 """
 
 
@@ -91,7 +93,7 @@ async def test_do_validate_no_remote(mock_input):
         with fake_cliux() as (cli, get_lines):
             opts = ValidateOptions(ValidateCLIOptions(verbose=True, cwd=upstream.working_dir))
             await do_validate(cli=cli, opts=opts)
-            assert strip_ansi("".join(get_lines())) == """[INFO]: git_guardrails has completed without taking any action.
+            assert strip_ansi("".join(get_lines())) == """git_guardrails has completed without taking any action.
 
 THERE'S NOTHING TO DO BECAUSE: NO GIT REMOTES FOUND
 ----------------------------------------

@@ -15,7 +15,7 @@ def test_cliux_creation():
 
 
 def test_cliux_logging():
-    with fake_cliux() as (cli, get_lines):
+    with fake_cliux(log_level=DEBUG) as (cli, get_lines):
         cli.info('grapes')
         cli.debug('apple')
         cli.warning('pear')

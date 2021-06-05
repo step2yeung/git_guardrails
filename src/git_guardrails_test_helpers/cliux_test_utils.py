@@ -2,7 +2,7 @@
 from contextlib import contextmanager
 from typing import Callable, Iterator, List, Tuple
 
-from logging import DEBUG
+from logging import INFO
 from git_guardrails_test_helpers.logger_test_utils import fake_logger
 from git_guardrails.cli.ux import CLIUX
 
@@ -11,7 +11,7 @@ from git_guardrails.cli.ux import CLIUX
 def fake_cliux(
     supports_color: bool = False,
     supports_tty: bool = False,
-    log_level: int = DEBUG
+    log_level: int = INFO
 ) -> Iterator[Tuple[CLIUX, Callable[[], List[str]]]]:
     with fake_logger(log_level) as (my_logger, get_lines):
         cli = CLIUX(
