@@ -1,3 +1,4 @@
+import json
 from os import path
 from typing import Iterator, List, Tuple
 from git import Repo  # type: ignore
@@ -48,18 +49,22 @@ def commit_all_modified_tracked_files(repo: Repo, message: str):
         repo.index.commit(message)
 
 
-def create_files_with_content_in_repo(repo: Repo, requested_commits: List[Tuple[List[Tuple[str, str]], str]]):
-    repo_dir = repo.working_dir
-    for c in requested_commits:
-        files_and_content = c[0]
-        commit_message = c[1]
-        for file_and_content in files_and_content:
-            filename = file_and_content[0]
-            file_content = file_and_content[1]
-            f = open(path.join(repo_dir, filename), 'w+')
-            f.write(file_content)
+def create_single_file_git_commit(repo: Repo, requested_commit: Tuple[Tuple[str, str], str]):
+    try:
+        repo_dir = repo.working_dir
+
+        commit_message = requested_commit[1]
+        file_and_content = requested_commit[0]
+
+        file_path = file_and_content[0]
+        file_content = file_and_content[1]
+
+        f = open(path.join(repo_dir, file_path), 'w+')
+        f.write(file_content)
         repo.index.add([])
         repo.index.commit(commit_message)
+    except IndexError:
+        raise Exception(f"Invalid commit tuple: {json.dumps(requested_commit)}")
 
 
 @contextmanager
@@ -87,9 +92,10 @@ def reflog_to_str(log: RefLog) -> str:
     return "\n".join(data)
 
 
-def create_git_history(repo: Repo, requested_commits: List[Tuple[List[Tuple[str, str]], str]]):
+def create_git_history(repo: Repo, requested_commits: List[Tuple[Tuple[str, str], str]]):
     assert repo.is_dirty() == False, "create_git_history may only be invoked on a 'clean' repo"
-    create_files_with_content_in_repo(repo, requested_commits)
+    for c in requested_commits:
+        create_single_file_git_commit(repo, c)
 
 
 def sorted_repo_branch_names(repo: Repo) -> List[str]:

@@ -49,11 +49,14 @@ class ValidateOptions:
         else:
             return None
 
-    def is_auto_rebase_enabled(self) -> Union[bool, None]:
-        if (self.cliOpts.auto_rebase is not None):
-            return self.cliOpts.auto_rebase
-        else:
-            return None
+    def get_commit_count_soft_fail_threshold(self) -> int:
+        return self.cliOpts.commit_count_soft_fail_threshold
+
+    def get_commit_count_hard_fail_threshold(self) -> int:
+        return self.cliOpts.commit_count_hard_fail_threshold
+
+    def should_auto_bypass_commit_count_soft_fail(self) -> bool:
+        return self.cliOpts.commit_count_auto_bypass_soft_fail
 
     def is_terminal_color_supported(self, color_support_checker: Callable[[], bool] = supports_color) -> bool:
         if (self.cliOpts.color is not None):

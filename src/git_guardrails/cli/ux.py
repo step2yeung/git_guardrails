@@ -1,7 +1,9 @@
 from logging import Logger
+from typing import Union
 from colorama import init as initColorama, Style, Fore
 from git_guardrails.cli.logging import create_cli_logger
 from git_guardrails.errors import NonApplicableSituationException, UnhandledSituationException, UserBypassException
+from git_guardrails.errors import UserBypassableWarning
 
 initColorama()
 
@@ -48,6 +50,25 @@ class CLIUX:
         self.info(f"""git_guardrails has completed without taking any action.
 
 {str(ex)}""")
+
+    def handle_user_bypassable_warning(self,
+                                       ex: UserBypassableWarning,
+                                       bypass_response: Union[str, None] = None,
+                                       retry_prompt: bool = True):
+        while(True):
+            user_response = ''
+            self.warning(f"""{str(ex)}""")
+
+            user_response = bypass_response or input(f"""
+{Fore.CYAN}Please type CONTINUE to proceed, or hit Ctrl+C to abort{Fore.RESET}
+{Style.BRIGHT}>{Style.RESET_ALL} """)
+            if (user_response.lower() == "continue"):
+                self.warning("Proceeding at user's request")
+                return
+            else:
+                self.error("invalid user response. Please either abort by pressing Ctrl+C or proceed by typing CONTINUE")
+                if (retry_prompt == False):
+                    return
 
     def handle_unhandled_situation_exception(self, ex: UnhandledSituationException, retry_prompt: bool = True):
         while(True):

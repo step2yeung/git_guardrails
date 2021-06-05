@@ -37,6 +37,7 @@ Options:
   --color / --no-color
   --tty / --no-tty
   --auto-fetch / --no-auto-fetch
-  --auto-rebase / --no-auto-rebase
+  --commit-count-soft-fail-threshold INTEGER
+  --commit-count-hard-fail-threshold INTEGER
   --help                          Show this message and exit.
 """

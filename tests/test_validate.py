@@ -31,7 +31,7 @@ async def test_review_branch_not_yet_pushed(mock_input):
             new_branch.checkout()
             assert downstream.active_branch.name == "feature-123"
             create_git_history(downstream, [
-                ([('my-file.txt', 'sample content')], 'second commit')
+                (('my-file.txt', 'sample content'), 'second commit')
             ])
             assert downstream.heads['feature-123'] is not None
             downstream_default_branch = git_default_branch(downstream)
@@ -65,9 +65,9 @@ async def test_new_upstream_commits_to_pull_down(mock_input_a):
             assert ", ".join(sorted_repo_branch_names(downstream)) == f"feature-123, {upstream_default_branch.name}"
             upstream_feature_branch.checkout()
             create_git_history(upstream, [
-                ([('file_0.txt', 'content for file 0')], 'second commit'),
-                ([('file_1.txt', 'content for file 1')], 'third commit'),
-                ([('file_2.txt', 'content for file 2')], 'fourth commit'),
+                (('file_0.txt', 'content for file 0'), 'second commit'),
+                (('file_1.txt', 'content for file 1'), 'third commit'),
+                (('file_2.txt', 'content for file 2'), 'fourth commit'),
             ])
             upstream_default_branch.checkout()
             assert upstream.active_branch.name in ['main', 'master']

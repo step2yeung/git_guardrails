@@ -19,13 +19,42 @@ class ExceptionWithNextBestActions(Exception):
         formatted_title = f"{Style.BRIGHT}{self.what_happened.upper()}{Style.RESET_ALL}"
         divider = "----------------------------------------"
         more_info_title = f"{Style.DIM}MORE INFORMATION{Style.RESET_ALL}"
-        message_elements = [formatted_title, divider, more_info_title, self.reason]
+        formatted_reason = self.reason
+        message_elements = [formatted_title, divider, more_info_title, formatted_reason]
         if (len(self.next_best_actions) > 0):
             next_actions_title = f"\n{Style.DIM}WHAT TO DO NEXT{Style.RESET_ALL}"
             next_actions_bullets = "\n".join(map(lambda s: f"- {s}", self.next_best_actions))
             message_elements.append(next_actions_title)
             message_elements.append(next_actions_bullets)
         return "\n".join(message_elements)
+
+
+class UserBypassableWarning(ExceptionWithNextBestActions):
+    """
+    An exception, associated with a potentially dangerous situation, that gives the user
+    a choice about whether the program exits successfully or not
+    """
+
+    def __init__(self, warning_title: str, warning_details: str):
+        super().__init__(
+            f"Warning: {warning_title}",
+            warning_details,
+            ["You may choose to continue", "You may choose to abort by pressing Ctrl + C"])
+
+
+class LikelyUserErrorException(ExceptionWithNextBestActions):
+    """
+    An exception, associated with a situation that's highly likely to be dangerous.
+    The user has no chance to bypass this, and the program will exit non-successfully
+    """
+
+    def __init__(self, warning_title: str, warning_details: str):
+        super().__init__(
+            f"Danger: {warning_title}",
+            warning_details,
+            ["It's quite possible that you've made a mistake in your review branch, that you need to address",
+             f"""If you're doing something exotic deliberately, you can suppress this failure by trying {
+                 ""}this command again, while skipping all git hooks"""])
 
 
 class UserBypassException(ExceptionWithNextBestActions):

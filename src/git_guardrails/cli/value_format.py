@@ -25,6 +25,10 @@ def format_integer(num: int, return_to_color=TOTAL_RESET) -> str:
     return __format_string(f"{num}", Fore.LIGHTGREEN_EX, return_to_color)
 
 
+def format_highlight(message: str, return_to_color=TOTAL_RESET) -> str:
+    return __format_string(f"{message}", Fore.YELLOW + Style.BRIGHT, return_to_color)
+
+
 def format_sha(sha: str, return_to_color=TOTAL_RESET) -> str:
     return __format_string(f"{sha[0:8]}", Fore.MAGENTA, return_to_color)
 
