@@ -24,10 +24,10 @@ def setup_need_to_fetch_scenario() -> Iterator[Tuple[Repo, Repo]]:
         # Create some commit activity on origin/master
         commit_all_modified_tracked_files(upstream, "initial commit")
         create_git_history(upstream, [
-            ([('old_file1.txt', 'hello from an existing commit!')], 'second commit'),
-            ([('old_file2.txt', 'hello from an existing commit!')], 'third commit'),
-            ([('old_file3.txt', 'hello from an existing commit!')], 'fourth commit'),
-            ([('old_file4.txt', 'hello from an existing commit!')], 'fifth commit'),
+            (('old_file1.txt', 'hello from an existing commit!'), 'second commit'),
+            (('old_file2.txt', 'hello from an existing commit!'), 'third commit'),
+            (('old_file3.txt', 'hello from an existing commit!'), 'fourth commit'),
+            (('old_file4.txt', 'hello from an existing commit!'), 'fifth commit'),
         ])
         # Create a review branch and check it out
         upstream_default_branch = upstream.active_branch
@@ -35,10 +35,10 @@ def setup_need_to_fetch_scenario() -> Iterator[Tuple[Repo, Repo]]:
         upstream_review999.checkout()
         # Create some commit history on origin/review-999
         create_git_history(upstream, [
-            ([('hello1.txt', 'hello world!')], 'second commit'),
-            ([('hello2.txt', 'hello world!')], 'third commit'),
-            ([('hello3.txt', 'hello world!')], 'fourth commit'),
-            ([('hello4.txt', 'hello world!')], 'fifth commit'),
+            (('hello1.txt', 'hello world!'), 'second commit'),
+            (('hello2.txt', 'hello world!'), 'third commit'),
+            (('hello3.txt', 'hello world!'), 'fourth commit'),
+            (('hello4.txt', 'hello world!'), 'fifth commit'),
         ])
         # Switch back to origin/master
         upstream_default_branch.checkout()
@@ -52,10 +52,10 @@ def setup_need_to_fetch_scenario() -> Iterator[Tuple[Repo, Repo]]:
             # Create some new commits on origin/review-999
             upstream_review999.checkout()
             create_git_history(upstream, [
-                ([('hello5.txt', 'hello world! 21')], 'purple commit'),
-                ([('hello6.txt', 'hello world! 22')], 'brown commit'),
-                ([('hello7.txt', 'hello world! 23')], 'yellow commit'),
-                ([('hello8.txt', 'hello world! 24')], 'orange commit'),
+                (('hello5.txt', 'hello world! 21'), 'purple commit'),
+                (('hello6.txt', 'hello world! 22'), 'brown commit'),
+                (('hello7.txt', 'hello world! 23'), 'yellow commit'),
+                (('hello8.txt', 'hello world! 24'), 'orange commit'),
             ])
             upstream_default_branch.checkout()
             yield (upstream, downstream)
