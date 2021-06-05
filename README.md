@@ -10,7 +10,14 @@ software engineers catch potential problems before they cause problematic side e
 
 
 
-**This is pre-production software, appropriate for early user testing. It is not yet intended for use in critical development workflows or at scale.**
+**🚨 This is pre-production software, appropriate for early user testing. It is not yet intended for use in critical development workflows or at scale. 🚨**
+
+## Limitations
+
+- This tool assumes that all pull requests target a "default branch" (e.g., `main` or `master`), it may not behave as expected when creating "chain PRs"
+- It is assumed that all PRs are performed on the git remote called `origin`
+- If both `main` and `master` branches are found on your `origin` git remote, the tool will fail to determine where your PRs are likely to target, and fail (see: #31)
+- If you're targeting a branch that doesn't exist anymore (e.g., it's been deleted) the tool will fail (see: #32)
 
 ## Usage
 

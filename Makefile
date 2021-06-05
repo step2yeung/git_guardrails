@@ -7,6 +7,7 @@ compile: clean
 	pipenv install
 pex:
 	pipenv run pex -r requirements.txt --python-shebang=/export/apps/python/3.7/bin/python3.7 -o git_guardrails.pex -e git_guardrails.command_line:main . --validate-entry-point
+	chmod +x git_guardrails.pex
 
 deploy: build
 	cp git_guardrails.pex /target/destination.pex
