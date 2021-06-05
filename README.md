@@ -65,6 +65,8 @@ python3 --version
 > Python 3.7.10
 ```
 
+### Setup procedure
+
 Clone this git repo
 ```sh
 git clone git@github.com:mike-north/git_guardrails

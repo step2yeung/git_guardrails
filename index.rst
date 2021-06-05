@@ -71,6 +71,9 @@ Dev environment requirements
    python3 --version
    > Python 3.7.10
 
+Setup procedure
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Clone this git repo
 
 .. code:: sh
