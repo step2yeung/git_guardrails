@@ -94,8 +94,8 @@ jobs:
           - macos-latest
           - windows-latest
         include:
-        - os: ubuntu-latest
-          path: ~/.cache/pip
+        # - os: ubuntu-latest
+        #   path: ~/.cache/pip
         - os: macos-latest
           path: ~/Library/Caches/pip
         - os: windows-latest
