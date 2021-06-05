@@ -24,6 +24,7 @@ sphinx-rtd-theme = "*"
 typed-ast = "*"
 typing-extensions = "*"
 types-colorama = "*"
+importlib-metadata = "*"
 
 [requires]
 python_version = "3.7"
