@@ -58,11 +58,68 @@ All of the following options can be set via environment variables (e.g.,
                                      user is stopped  [default: 40]
      -h, --help                      Show this message and exit.
 
-Integration w/ Your Workflow
-----------------------------
+Contributing
+------------
 
-It is your responsibility to integrate this into your git workflow, with
-the understanding that this CLI will exit with ``1`` if it positi
+Dev environment requirements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Python 3.7 is required**
+
+.. code:: sh
+
+   python3 --version
+   > Python 3.7.10
+
+Clone this git repo
+
+.. code:: sh
+
+   git clone git@github.com:mike-north/git_guardrails
+   cd git_guardrails
+
+Install dependencies and build the project
+
+.. code:: sh
+
+   make
+
+Install the local module on your machine
+
+.. code:: sh
+
+   pip install -e git_guardrails
+
+Now go to your home folder and try running
+
+.. code:: sh
+
+   git_guardrails -h
+
+You should see something like the following, if everything is working
+properly
+
+::
+
+   Usage: git_guardrails [OPTIONS] COMMAND [ARGS]...
+
+   Options:
+     -h, --help  Show this message and exit.
+
+   Commands:
+     validate  Examine the current Git workspace and perform some...
+
+Now you should be able to use ``git_guardrails validate`` across your
+local machine, in any git repo
+
+Legal
+-----
+
+Code is covered by the `BSD-2-Clause license`_. © 2021 LinkedIn, All
+Rights Reserved
+
+.. _BSD-2-Clause license: ./LICENSE
+
 
 .. _pre-push: https://www.git-scm.com/docs/githooks#_pre_push
 
