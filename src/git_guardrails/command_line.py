@@ -21,9 +21,10 @@ async def main():
     return
 
 
-@main.command()
+@main.command(context_settings=CONTEXT_SETTINGS)
 @click.option('-v', '--verbose/--no-verbose', type=bool, default=False)
 @click.option('--cwd', type=str)
+@click.option('--enabled/--no-enabled', type=bool, default=True, hidden=True)
 @click.option('--current-branch', type=str)
 @click.option('--color/--no-color', type=bool, default=True)
 @click.option('--tty/--no-tty', type=bool)
@@ -34,6 +35,7 @@ async def main():
 @coroutine
 async def validate(verbose: bool,
                    cwd: str,
+                   enabled: bool,
                    current_branch: str,
                    color: bool,
                    tty: bool,
@@ -60,4 +62,7 @@ async def validate(verbose: bool,
         supports_color=opts.is_terminal_color_supported(),
         supports_tty=opts.is_terminal_tty_supported()
     )
+    if (enabled == False):
+        print("skipping validation, due to '--no-enabled' CLI arg, or GIT_GUARDRAILS_ENABLED=False env variable")
+        return
     await do_validate(cli, opts)
