@@ -1,4 +1,4 @@
-from logging import INFO
+from logging import INFO  # type: ignore
 from unittest.mock import patch
 from git.refs.head import Head  # type: ignore
 import pytest
@@ -23,6 +23,12 @@ def setup_need_to_fetch_scenario() -> Iterator[Tuple[Repo, Repo]]:
     with temp_repo() as upstream:
         # Create some commit activity on origin/master
         commit_all_modified_tracked_files(upstream, "initial commit")
+        create_git_history(upstream, [
+            ([('old_file1.txt', 'hello from an existing commit!')], 'second commit'),
+            ([('old_file2.txt', 'hello from an existing commit!')], 'third commit'),
+            ([('old_file3.txt', 'hello from an existing commit!')], 'fourth commit'),
+            ([('old_file4.txt', 'hello from an existing commit!')], 'fifth commit'),
+        ])
         # Create a review branch and check it out
         upstream_default_branch = upstream.active_branch
         upstream_review999 = upstream.create_head('review-999')
@@ -103,5 +109,6 @@ async def test_need_to_fetch_upstream_and_downstream_commits(mock_input):
 [WARNING]: New commits on origin/review-999 were detected, which have not yet been pulled down to review-999
 Fetching new commits for branch origin/review-999
 Fetch from origin complete
+Comparing review-999 against origin/review-999
 """
             assert head_before_fetch.hexsha != tracked_branch.commit.hexsha, 'New commits have been pulled down'

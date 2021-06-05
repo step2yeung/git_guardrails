@@ -81,6 +81,7 @@ async def test_new_upstream_commits_to_pull_down(mock_input_a):
 [WARNING]: New commits on origin/feature-123 were detected, which have not yet been pulled down to feature-123
 Fetching new commits for branch origin/feature-123
 Fetch from origin complete
+Comparing feature-123 against origin/feature-123
 """
 
 

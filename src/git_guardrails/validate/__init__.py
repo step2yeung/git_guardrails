@@ -1,4 +1,6 @@
 from functools import reduce
+from typing import List
+from git.objects.commit import Commit  # type: ignore
 from git.refs.head import Head  # type: ignore
 from git.refs.remote import RemoteReference  # type: ignore
 from git.remote import Remote  # type: ignore
@@ -70,32 +72,37 @@ def determine_whether_to_auto_fetch(cli: CLIUX, opts: ValidateOptions, active_br
             cli.warning(f"Invalid response detected: '{user_response}'. Please answer 'Y' or 'N'.")
 
 
-async def validate_branches_and_merge_bases(cli: CLIUX, repo: Repo, opts: ValidateOptions):
+def validate_merge_bases_with_default_branch(cli: CLIUX,
+                                             repo: Repo,
+                                             active_branch_name: str,
+                                             default_branch_name: str) -> Commit:
+    merge_bases = repo.merge_base(default_branch_name, active_branch_name)
+    merge_bases_csv = ", ".join(map(lambda c: c.hexsha[0:8], merge_bases))
+    cli.debug(f"merge_bases: {merge_bases_csv}")
+    num_merge_bases = len(merge_bases)
+    if (num_merge_bases == 0):
+        raise UnhandledSituationException(
+            'No merge-base commit found',
+            f"""No merge-base commits between branches {format_branch_name(default_branch_name) } and {
+            format_branch_name(active_branch_name) } could be found, so validation could not be performed.""")
+    if (num_merge_bases > 1):
+        description = " ".join(
+            [
+                f"Multiple ({format_integer(num_merge_bases)}) merge-base commits between branches",
+                format_branch_name(default_branch_name),
+                "and",
+                format_branch_name(active_branch_name),
+                "were found:"
+            ]
+        )
+        commits_description = reduce(lambda a, b: f"{a}\n- {b}", map(format_commit, merge_bases), "")
+        raise UnhandledSituationException(
+            'Multiple merge-base commits found',
+            description + commits_description)
+    return merge_bases[0]
 
-    def validate_merge_bases_with_default_branch(cli: CLIUX, repo: Repo, active_branch_name: str, default_branch_name: str):
-        merge_bases = repo.merge_base(default_branch_name, active_branch_name)
-        merge_bases_csv = ", ".join(map(lambda c: c.hexsha[0:8], merge_bases))
-        cli.debug(f"merge_bases: {merge_bases_csv}")
-        num_merge_bases = len(merge_bases)
-        if (num_merge_bases == 0):
-            raise UnhandledSituationException(
-                'No merge-base commit found',
-                f"""No merge-base commits between branches {format_branch_name(default_branch_name) } and {
-                format_branch_name(active_branch_name) } could be found, so validation could not be performed.""")
-        if (num_merge_bases > 1):
-            description = " ".join(
-                [
-                    f"Multiple ({format_integer(num_merge_bases)}) merge-base commits between branches",
-                    format_branch_name(default_branch_name),
-                    "and",
-                    format_branch_name(active_branch_name),
-                    "were found:"
-                ]
-            )
-            commits_description = reduce(lambda a, b: f"{a}\n- {b}", map(format_commit, merge_bases), "")
-            raise UnhandledSituationException(
-                'Multiple merge-base commits found',
-                description + commits_description)
+
+async def validate_branches_and_merge_bases(cli: CLIUX, repo: Repo, opts: ValidateOptions):
 
     active_branch = get_branch_information(repo, await opts.get_current_branch_name(repo))  # current_branch
     cli.debug(f"active branch: {active_branch.name} @ {active_branch.commit.hexsha}")
@@ -146,7 +153,11 @@ def analyze_review_branch_tracking_situation(cli: CLIUX, repo: Repo, active_bran
         return (latest_remote_sha, active_branch_tracked_ref)
 
 
-def offer_to_fetch_from_upstream(cli: CLIUX, repo: Repo, opts: ValidateOptions, active_branch: Head, active_branch_tracked_ref: RemoteReference):
+def offer_to_fetch_from_upstream(cli: CLIUX,
+                                 repo: Repo,
+                                 opts: ValidateOptions,
+                                 active_branch: Head,
+                                 active_branch_tracked_ref: RemoteReference):
     cli.warning(f"""New commits on {active_branch_tracked_ref
                 } were detected, which have not yet been pulled down to {active_branch.name}""")
     determine_whether_to_auto_fetch(cli, opts, active_branch_tracked_ref)
@@ -156,6 +167,20 @@ def offer_to_fetch_from_upstream(cli: CLIUX, repo: Repo, opts: ValidateOptions, 
     cli.debug(f"running 'git fetch' from remote '{origin.name}' with refspec '{refspec}'")
     origin.fetch()
     cli.info(f"Fetch from {origin.name} complete")
+
+
+def get_truncated_log(repo: Repo, commit: Head, tail_sha: str) -> List[Commit]:
+    fifty_first_commits = list(repo.iter_commits(commit, max_count=100))
+    commits_after_tail: List[Commit] = []
+    found_tail = False
+    for c in fifty_first_commits:
+        if (found_tail == True):
+            continue
+        if (c.hexsha == tail_sha):
+            found_tail = True
+            continue
+        commits_after_tail.append(c)
+    return commits_after_tail
 
 
 async def do_validate(cli: CLIUX, opts: ValidateOptions):
@@ -171,6 +196,16 @@ async def do_validate(cli: CLIUX, opts: ValidateOptions):
         if (has_latest_commits_from_upstream == False):
             offer_to_fetch_from_upstream(cli=cli, repo=repo, opts=opts, active_branch=active_branch,
                                          active_branch_tracked_ref=active_branch_tracked_ref)
+        cli.info(f"Comparing {active_branch.name} against {active_branch_tracked_ref.name}")
+        merge_base = validate_merge_bases_with_default_branch(
+            cli, repo, repo.active_branch.name, active_branch_tracked_ref.name)
+        cli.debug(f"Identified common commit {merge_base.hexsha[0:8]}")
+        cli.debug(f"Local sha: {active_branch.commit.hexsha}")
+        cli.debug(f"Upstream sha: {active_branch_tracked_ref.commit.hexsha}")
+        new_local_commits = get_truncated_log(repo, active_branch.commit, merge_base.hexsha)
+        new_upstream_commits = get_truncated_log(repo, active_branch_tracked_ref.commit, merge_base.hexsha)
+        cli.debug(f"new local commits: {new_local_commits}")
+        cli.debug(f"new upstream commits: {new_upstream_commits}")
     except UserBypassException as ex:
         cli.handle_user_bypass_exception(ex)
     except NonApplicableSituationException as ex:
