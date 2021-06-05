@@ -25,19 +25,25 @@ async def main():
 @click.option('--current-branch', type=str)
 @click.option('--color/--no-color', type=bool, default=True)
 @click.option('--tty/--no-tty', type=bool)
+@click.option('--auto-fetch/--no-auto-fetch', type=bool, default=False)
+@click.option('--auto-rebase/--no-auto-rebase', type=bool, default=False)
 @coroutine
 async def validate(verbose: bool,
                    cwd: str,
                    current_branch: str,
                    color: bool,
-                   tty: bool):
+                   tty: bool,
+                   auto_fetch: bool,
+                   auto_rebase: bool):
     """Examine the current Git workspace and perform some sanity-checking"""
     cliOptions = ValidateCLIOptions(
         verbose=verbose,
         cwd=cwd,
         current_branch=current_branch,
         color=color,
-        tty=tty
+        tty=tty,
+        auto_fetch=auto_fetch,
+        auto_rebase=auto_rebase
     )
     opts = ValidateOptions(cliOptions)
     log_level = DEBUG if opts.is_verbose() else INFO

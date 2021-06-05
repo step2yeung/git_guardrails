@@ -55,7 +55,7 @@ def setup_need_to_fetch_scenario() -> Iterator[Tuple[Repo, Repo]]:
             yield (upstream, downstream)
 
 
-@patch('click.confirm', return_value=True)
+@patch('builtins.input', return_value='Y')
 async def test_need_to_fetch_only_upstream_commits(mock_input):
     with setup_need_to_fetch_scenario() as (upstream, downstream):
         assert upstream.is_dirty() == False
@@ -67,7 +67,7 @@ async def test_need_to_fetch_only_upstream_commits(mock_input):
                 "".join(get_lines()))
 
 
-@patch('click.confirm', return_value=False)
+@patch('builtins.input', return_value='N')
 async def test_need_to_fetch_only_upstream_commits_user_refuses(mock_input):
     with setup_need_to_fetch_scenario() as (upstream, downstream):
         assert upstream.is_dirty() == False
@@ -83,11 +83,11 @@ git_guardrails has completed without taking any action.
 USER BYPASS
 ----------------------------------------
 MORE INFORMATION
-The user decided to bypass git_guardrails by user decided not to download new commits from origin/review-999
+The user decided to bypass git_guardrails (user decided not to download new commits from origin/review-999)
 """
 
 
-@patch('click.confirm', return_value=True)
+@patch('builtins.input', return_value='Y')
 async def test_need_to_fetch_upstream_and_downstream_commits(mock_input):
     with setup_need_to_fetch_scenario() as (upstream, downstream):
         assert upstream.is_dirty() == False

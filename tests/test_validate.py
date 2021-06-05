@@ -52,8 +52,7 @@ WHAT TO DO NEXT
 
 
 @patch('builtins.input', return_value="continue")
-@patch('click.confirm', return_value="Y")
-async def test_new_upstream_commits_to_pull_down(mock_input_a, mock_input_b):
+async def test_new_upstream_commits_to_pull_down(mock_input_a):
     """
     Test case for "origin/review-branch has new commits that I must pull down"
     (no new local commits that origin doesn't have yet)
@@ -73,7 +72,7 @@ async def test_new_upstream_commits_to_pull_down(mock_input_a, mock_input_b):
             upstream_default_branch.checkout()
             assert upstream.active_branch.name in ['main', 'master']
             downstream.heads['feature-123'].checkout()
-            opts = ValidateOptions(ValidateCLIOptions(verbose=False, cwd=downstream.working_dir))
+            opts = ValidateOptions(ValidateCLIOptions(verbose=False, cwd=downstream.working_dir, auto_fetch=True))
             assert opts.is_verbose() == False
             with fake_cliux(log_level=INFO) as (cli, get_lines):
                 assert cli.log_level == INFO

@@ -1,6 +1,6 @@
-import click
 from functools import reduce
 from git.refs.head import Head  # type: ignore
+from git.refs.remote import RemoteReference  # type: ignore
 from git.remote import Remote  # type: ignore
 from yaspin import yaspin  # type: ignore
 
@@ -76,6 +76,23 @@ def get_branch_information(repo: Repo, branch_name: str) -> Head:
     return branch_head
 
 
+def determine_whether_to_auto_fetch(cli: CLIUX, opts: ValidateOptions, active_branch_tracked_ref: RemoteReference):
+    user_response = ""
+    if opts.is_auto_fetch_enabled() == True:
+        user_response = 'y'
+    elif opts.is_auto_fetch_enabled() == False:
+        user_response = 'n'
+
+    while user_response not in ['y', 'Y']:
+        user_response = input("Would you like to download these new commits? [y/n]")
+        if user_response in ['N', 'n']:
+            cli.debug(f"When asked whether we can download new commits, user response was {user_response}")
+            raise UserBypassException(f"""user decided not to download new commits from {
+                active_branch_tracked_ref.name}""")
+        if user_response not in ['y', 'Y']:
+            cli.warning(f"Invalid response detected: '{user_response}'. Please answer 'Y' or 'N'.")
+
+
 async def do_validate(cli: CLIUX, opts: ValidateOptions):
     try:
         cwd = opts.get_cwd()  # working directory
@@ -129,11 +146,7 @@ review branches, and will not take any action when on a git repo's default branc
             if (has_latest_commits_from_upstream == False):
                 cli.warning(f"""New commits on {active_branch_tracked_ref
                             } were detected, which have not yet been pulled down to {active_branch.name}""")
-                user_response = click.confirm("Would you like to download these new commits?")
-                if user_response == False:
-                    cli.debug(f"When asked whether we can download new commits, user response was {user_response}")
-                    raise UserBypassException(f"""user decided not to download new commits from {
-                        active_branch_tracked_ref.name}""")
+                determine_whether_to_auto_fetch(cli, opts, active_branch_tracked_ref)
                 origin: Remote = repo.remotes['origin']
                 refspec = f"{active_branch.name}:{active_branch_tracked_ref.name}"
                 cli.info(f"Fetching new commits for branch {active_branch_tracked_ref.name}")

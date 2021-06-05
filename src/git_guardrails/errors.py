@@ -40,7 +40,7 @@ class UserBypassException(ExceptionWithNextBestActions):
     def __init__(self, bypass_description: str):
         super().__init__(
             "User bypass",
-            f"The user decided to bypass git_guardrails by {bypass_description}",
+            f"The user decided to bypass git_guardrails ({bypass_description})",
             [])
 
 

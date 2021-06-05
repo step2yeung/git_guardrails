@@ -4,6 +4,8 @@ class ValidateCLIOptions:
                  verbose: bool = False,
                  cwd: str = None,
                  current_branch: str = None,
+                 auto_fetch: bool = None,
+                 auto_rebase: bool = None,
                  color: bool = None,
                  tty: bool = None):
         self.cwd = cwd
@@ -11,6 +13,8 @@ class ValidateCLIOptions:
         self.current_branch = current_branch
         self.color = color
         self.tty = tty
+        self.auto_fetch = auto_fetch
+        self.auto_rebase = auto_rebase
 
     def __str__(self):
         return "".join([
